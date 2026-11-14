@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediPulse | Admin Command Centre</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --navy:#142b4a;
+  --blue:#3679e8;
+  --cyan:#32b9c9;
+  --bg:#f3f7fc;
+  --text:#253650;
+  --muted:#8492a8;
+  --green:#18a979;
+  --red:#e45c6a;
+  --orange:#ed9c45;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+}
+.sidebar{
+  width:245px;background:var(--navy);color:white;
+  min-height:100vh;padding:26px 17px;
+  position:fixed;left:0;top:0;bottom:0;
+  display:flex;flex-direction:column;z-index:5;
+}
+.brand{display:flex;align-items:center;gap:12px;margin:4px 8px 38px}
+.brand-icon{
+  width:43px;height:43px;border-radius:14px;
+  background:linear-gradient(135deg,#3e9ef5,#36c9c5);
+  display:grid;place-items:center;font-size:22px;
+}
+.brand h2{font-size:19px;letter-spacing:-.5px}
+.brand small{color:#a9bed7;font-size:10px;display:block;margin-top:3px}
+.nav-label{font-size:10px;color:#8298b3;letter-spacing:1.5px;margin:15px 12px}
+.nav-item{
+  padding:13px 14px;border-radius:11px;margin:4px 0;
+  display:flex;align-items:center;gap:13px;
+  color:#b7c8dd;font-size:13px;cursor:pointer;transition:.2s;
+}
+.nav-item:hover,.nav-item.active{
+  background:#294568;color:white;
+}
+.nav-item.active{border-left:3px solid #4fc7d0}
+.nav-item i{width:19px;text-align:center}
+.sidebar-bottom{margin-top:auto}
+.admin-profile{
+  border-top:1px solid #38516f;padding:20px 5px 0;
+  display:flex;align-items:center;gap:11px;
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:#d9edff;color:#2464ad;
+  display:grid;place-items:center;font-weight:800;
+}
+.admin-profile small{color:#a9bed7;font-size:10px}
+.admin-profile strong{font-size:12px;display:block;margin-bottom:4px}
+main{margin-left:245px;width:calc(100% - 245px);padding:28px 34px 50px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:28px;gap:15px;
+}
+.topbar h1{font-size:25px;letter-spacing:-1px;color:var(--navy)}
+.topbar p{font-size:12px;color:var(--muted);margin-top:7px}
+.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{
+  width:39px;height:39px;border:1px solid #e5ebf3;
+  border-radius:12px;background:white;color:var(--navy);
+  cursor:pointer;position:relative;
+}
+.dot{width:7px;height:7px;background:#ed6874;border-radius:50%;position:absolute;right:8px;top:7px}
+.date-pill{padding:11px 14px;background:white;border-radius:10px;font-size:11px;color:var(--muted)}
+.hero{
+  background:linear-gradient(110deg,#173c67,#2467a9 65%,#31aab6);
+  color:white;border-radius:19px;padding:25px 28px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:23px;overflow:hidden;position:relative;
+}
+.hero:after{
+  content:"✚";position:absolute;right:22%;top:-55px;
+  font-size:190px;color:#ffffff0b;
+}
+.hero h2{font-size:21px;margin-bottom:9px}
+.hero p{font-size:12px;color:#d3e8ff;line-height:1.7}
+.hero-badge{
+  padding:10px 14px;border-radius:10px;background:#ffffff20;
+  font-size:11px;z-index:1;white-space:nowrap;
+}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:15px;margin-bottom:23px;
+}
+.stat{
+  background:white;border-radius:15px;padding:19px;
+  border:1px solid #edf1f7;transition:.2s;
+}
+.stat:hover{transform:translateY(-3px);box-shadow:0 8px 25px #1a477010}
+.stat-head{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{
+  width:39px;height:39px;border-radius:12px;
+  display:grid;place-items:center;font-size:16px;
+}
+.stat strong{display:block;font-size:26px;margin:15px 0 5px;color:var(--navy)}
+.stat span{font-size:11px;color:var(--muted)}
+.stat small{font-size:10px;color:var(--green)}
+.content-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:18px;margin-bottom:19px}
+.panel{
+  background:white;border-radius:16px;padding:21px;
+  border:1px solid #edf1f7;min-width:0;
+}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:19px;gap:10px}
+.panel-head h3{font-size:14px;color:var(--navy)}
+.panel-head small{font-size:10px;color:var(--muted)}
+.btn{
+  border:0;border-radius:9px;padding:10px 13px;
+  font-size:11px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.btn-blue{background:var(--blue);color:white}
+.btn-blue:hover{background:#245fc0}
+.btn-green{background:#e5f7ef;color:#13895e}
+.btn-red{background:#fff0f1;color:#d44d5a}
+.btn-light{background:#edf3fc;color:#376cae}
+.btn-orange{background:#fff4e6;color:#bd7624}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.search{
+  border:1px solid #e6ebf3;border-radius:9px;padding:10px 12px;
+  font-size:11px;outline:none;width:100%;font-family:inherit;
+}
+.search:focus{border-color:var(--blue)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{
+  color:#92a0b3;text-align:left;font-size:10px;
+  font-weight:600;padding:12px 10px;border-bottom:1px solid #edf1f6;
+}
+td{padding:13px 10px;font-size:11px;border-bottom:1px solid #f0f3f8}
+td strong{color:var(--navy)}
+.status{
+  padding:6px 9px;border-radius:20px;font-size:9px;font-weight:700;
+  display:inline-block;
+}
+.available{background:#e6f8f0;color:#15966a}
+.pending{background:#fff4e3;color:#bc812c}
+.rejected{background:#ffebed;color:#d24d5c}
+.booked{background:#eaf0ff;color:#456fc2}
+.completed{background:#eaf5f5;color:#328a8c}
+.mini-btn{padding:7px 9px;font-size:10px}
+.doctor-list{display:flex;flex-direction:column;gap:17px}
+.doctor{
+  display:flex;align-items:center;gap:12px;
+}
+.doctor-avatar{
+  width:40px;height:40px;border-radius:12px;
+  background:#e9f2ff;color:#3575c4;display:grid;place-items:center;
+}
+.doctor-info{flex:1}
+.doctor-info strong{font-size:11px;display:block;margin-bottom:5px}
+.doctor-info small{font-size:9px;color:var(--muted)}
+.progress{height:6px;background:#edf1f6;border-radius:10px;margin-top:8px;overflow:hidden}
+.progress span{display:block;height:100%;border-radius:10px;background:var(--cyan)}
+.doctor-count{font-size:10px;color:var(--muted)}
+.queue-list{display:flex;flex-direction:column;gap:13px}
+.queue-item{display:flex;align-items:center;gap:12px;padding:10px;background:#f8faff;border-radius:11px}
+.token{
+  background:#e6efff;color:#326ec0;border-radius:9px;
+  padding:10px;font-weight:800;font-size:12px;
+}
+.queue-info{flex:1}
+.queue-info strong{font-size:11px;display:block}
+.queue-info small{font-size:9px;color:var(--muted)}
+.section{display:none}
+.section.active{display:block}
+.toolbar{display:flex;gap:10px;margin-bottom:17px;flex-wrap:wrap}
+.toolbar .search{flex:1;min-width:170px}
+select{
+  padding:10px;border:1px solid #e6ebf3;border-radius:9px;
+  background:white;font-size:11px;color:var(--text);outline:none;
+}
+.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.slot-card{padding:15px;border:1px solid #e9eff6;border-radius:12px}
+.slot-card h4{font-size:12px;margin-bottom:7px}
+.slot-card p{font-size:10px;color:var(--muted);margin-bottom:12px}
+.slot-card .slot-time{display:flex;justify-content:space-between;font-size:10px;margin:7px 0}
+.alert{
+  background:#fff8eb;border:1px solid #f8e5c4;
+  color:#966522;padding:13px;border-radius:11px;
+  font-size:11px;line-height:1.6;margin-bottom:15px;
+}
+.notification{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 4px;border-bottom:1px solid #edf1f6;
+}
+.notification i{width:36px;height:36px;border-radius:11px;background:#eaf2ff;color:#4278c6;display:grid;place-items:center}
+.notification div{flex:1}
+.notification strong{font-size:11px;display:block;margin-bottom:5px}
+.notification small{font-size:10px;color:var(--muted)}
+.modal-bg{
+  display:none;position:fixed;inset:0;background:#10233a88;
+  z-index:20;align-items:center;justify-content:center;padding:15px;
+}
+.modal-bg.show{display:flex}
+.modal{
+  width:430px;max-width:100%;background:white;border-radius:17px;
+  padding:24px;max-height:90vh;overflow:auto;
+}
+.modal h3{font-size:17px;margin-bottom:18px;color:var(--navy)}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:10px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px;border:1px solid #e5ebf2;
+  border-radius:9px;font:11px Inter;outline:none;
+}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.toast{
+  position:fixed;bottom:25px;right:25px;background:#183c5e;
+  color:white;padding:14px 19px;border-radius:12px;
+  font-size:12px;z-index:50;display:none;
+  box-shadow:0 8px 25px #0002;
+}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:12px}
+.mobile-menu{display:none}
+@media(max-width:1050px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .content-grid{grid-template-columns:1fr}
+ .slot-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+ .sidebar{width:65px;padding:20px 8px}
+ .brand{margin:0 0 35px;justify-content:center}
+ .brand h2,.nav-item span,.nav-label,.admin-profile div{display:none}
+ .nav-item{justify-content:center;padding:14px 5px}
+ .admin-profile{justify-content:center}
+ main{margin-left:65px;width:calc(100% - 65px);padding:20px 13px}
+ .topbar h1{font-size:19px}
+ .date-pill{display:none}
+ .hero{padding:20px}
+ .hero h2{font-size:17px}
+ .hero-badge{font-size:9px}
+ .stats{gap:9px}
+ .stat{padding:13px}
+ .stat strong{font-size:22px}
+ .slot-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+    <div><h2>MediPulse</h2><small>SMART HOSPITAL SYSTEM</small></div>
+  </div>
+
+  <div class="nav-label">MAIN MENU</div>
+  <div class="nav-item active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></div>
+  <div class="nav-item" data-page="appointments"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></div>
+  <div class="nav-item" data-page="patients"><i class="fa-solid fa-users"></i><span>Patient Records</span></div>
+  <div class="nav-item" data-page="doctors"><i class="fa-solid fa-user-doctor"></i><span>Doctor Availability</span></div>
+  <div class="nav-item" data-page="tokens"><i class="fa-solid fa-ticket"></i><span>Live Token Queue</span></div>
+  <div class="nav-item" data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></div>
+
+  <div class="nav-label">SYSTEM</div>
+  <div class="nav-item" onclick="queueAlert()"><i class="fa-solid fa-clock"></i><span>Queue Delay Alert</span></div>
+  <div class="sidebar-bottom">
+    <div class="admin-profile">
+      <div class="avatar">A</div>
+      <div><strong>Hospital Admin</strong><small>Administrator</small></div>
+    </div>
+    <div class="nav-item" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></div>
+  </div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <div>
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <p id="dateText">Your hospital command centre</p>
+    </div>
+    <div class="top-actions">
+      <div class="date-pill" id="todayDate"></div>
+      <button class="icon-btn" onclick="showPage('notifications')"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="section active" id="dashboard">
+    <div class="hero">
+      <div>
+        <h2>Good day, Administrator! 👋</h2>
+        <p>Your hospital is running smarter with MediPulse.<br>
+        Monitor appointments, doctors and patient queues in one place.</p>
+      </div>
+      <div class="hero-badge"><i class="fa-solid fa-circle-check"></i> Command Centre Active</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-head"><span>Registered Patients</span><div class="stat-icon" style="background:#e9f1ff;color:#3877d0"><i class="fa-solid fa-users"></i></div></div>
+        <strong id="totalPatients">0</strong><small>Patient database</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Today's Appointments</span><div class="stat-icon" style="background:#e4f8f4;color:#1a9d88"><i class="fa-solid fa-calendar-check"></i></div></div>
+        <strong id="totalAppointments">0</strong><small>Scheduled visits</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Pending Requests</span><div class="stat-icon" style="background:#fff3e4;color:#df9942"><i class="fa-solid fa-hourglass-half"></i></div></div>
+        <strong id="pendingRequests">0</strong><small>Awaiting approval</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Patients Waiting</span><div class="stat-icon" style="background:#f2eaff;color:#9565c9"><i class="fa-solid fa-ticket"></i></div></div>
+        <strong id="waitingPatients">0</strong><small>In the live queue</small>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-calendar-week"></i> Recent Appointment Requests</h3><button class="btn btn-light" onclick="showPage('appointments')">View all</button></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>PATIENT</th><th>DOCTOR</th><th>TIME</th><th>STATUS</th></tr></thead>
+          <tbody id="recentAppointments"></tbody></table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-user-doctor"></i> Doctor Availability</h3><button class="btn btn-light" onclick="showPage('doctors')">Details</button></div>
+        <div class="doctor-list" id="doctorOverview"></div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-wave-square"></i> Live Patient Queue</h3><span class="status available">LIVE DEMO</span></div>
+        <div class="queue-list" id="dashboardQueue"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-shield-heart"></i> System Health</h3></div>
+        <div class="notification"><i class="fa-solid fa-calendar-check"></i><div><strong>Appointment Management</strong><small>Slot checking enabled</small></div><span class="status available">Active</span></div>
+        <div class="notification"><i class="fa-solid fa-ticket"></i><div><strong>Token Management</strong><small>Automatic token generation</small></div><span class="status available">Active</span></div>
+        <div class="notification"><i class="fa-solid fa-message"></i><div><strong>Notification Tracker</strong><small>Demo notification logging</small></div><span class="status pending">Simulated</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPOINTMENTS -->
+  <section class="section" id="appointments">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Appointment Requests</h3>
+        <span class="status pending" id="requestCount">0 Pending</span>
+      </div>
+      <div class="toolbar">
+        <input class="search" id="appointmentSearch" placeholder="Search patient or doctor..." oninput="renderAppointments()">
+        <select id="appointmentFilter" onchange="renderAppointments()">
+          <option value="All">All Statuses</option>
+          <option>Pending</option><option>Accepted</option>
+          <option>Rejected</option><option>Completed</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>PATIENT</th><th>CONTACT</th><th>DOCTOR</th><th>DATE & TIME</th><th>TOKEN</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody id="appointmentTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATIENTS -->
+  <section class="section" id="patients">
+    <div class="panel">
+      <div class="panel-head"><h3>Patient Records</h3><button class="btn btn-blue" onclick="addPatient()">+ Add Patient</button></div>
+      <div class="toolbar">
+        <input class="search" id="patientSearch" placeholder="Search name, phone or patient ID..." oninput="renderPatients()">
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>PATIENT ID</th><th>NAME</th><th>CONTACT</th><th>EMAIL</th><th>APPOINTMENTS</th><th>ACTION</th></tr></thead>
+        <tbody id="patientTable"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCTORS -->
+  <section class="section" id="doctors">
+    <div class="panel">
+      <div class="panel-head"><h3>Doctor Slot Availability</h3><span class="status available">SCHEDULE MONITOR</span></div>
+      <div class="alert"><i class="fa-solid fa-circle-info"></i> Doctor slots are calculated from accepted appointments. You can also mark a doctor unavailable.</div>
+      <div class="toolbar">
+        <input type="date" id="slotDate" onchange="renderDoctors()">
+        <select id="doctorFilter" onchange="renderDoctors()"><option value="All">All Doctors</option><option value="Available">Available</option><option value="Fully Booked">Fully Booked</option><option value="Unavailable">Unavailable</option></select>
+      </div>
+      <div class="slot-grid" id="doctorCards"></div>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section class="section" id="tokens">
+    <div class="panel">
+      <div class="panel-head"><h3>Live Token Tracking</h3><span class="status available">QUEUE MONITOR</span></div>
+      <div class="alert">Manage patient turns. Select "Now Serving" when the doctor is ready for the next patient.</div>
+      <div class="table-wrap">
+        <table><thead><tr><th>TOKEN</th><th>PATIENT</th><th>DOCTOR</th><th>TIME</th><th>QUEUE STATUS</th><th>ACTION</th></tr></thead>
+        <tbody id="tokenTable"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTIFICATIONS -->
+  <section class="section" id="notifications">
+    <div class="panel">
+      <div class="panel-head"><h3>Patient Notification Monitoring</h3><span class="status available">MESSAGE LOG</span></div>
+      <div class="alert">Monitor confirmation, rejection, token and turn-alert messages. This demo records simulated delivery statuses; connect an SMS or messaging provider for real delivery.</div>
+      <div class="toolbar">
+        <input class="search" id="notificationSearch" placeholder="Search notifications..." oninput="renderNotifications()">
+        <select id="notificationFilter" onchange="renderNotifications()"><option value="All">All statuses</option><option>Sent</option><option>Failed</option><option>Pending</option></select>
+      </div>
+      <div id="notificationList"></div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Details</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-light" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const today = new Date().toISOString().slice(0,10);
+document.getElementById("todayDate").textContent =
+  new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+document.getElementById("dateText").textContent =
+  new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+document.getElementById("slotDate").value=today;
+
+const defaultDoctors=[
+ {id:1,name:"Dr. Aditi Sharma",specialty:"Cardiologist",hours:"09:00 - 13:00",slots:["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30"],off:false},
+ {id:2,name:"Dr. Rahul Mehta",specialty:"Dermatologist",hours:"10:00 - 14:00",slots:["10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"],off:false},
+ {id:3,name:"Dr. Neha Kapoor",specialty:"Neurologist",hours:"09:00 - 13:00",slots:["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30"],off:false},
+ {id:4,name:"Dr. Arjun Singh",specialty:"Orthopedic",hours:"11:00 - 15:00",slots:["11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30"],off:false}
+];
+
+function load(key, fallback){
+ try {const v=localStorage.getItem("medipulse_"+key);return v?JSON.parse(v):fallback}
+ catch(e){return fallback}
+}
+let doctors=load("doctors",defaultDoctors);
+let patients=load("patients",[
+ {id:"P101",name:"Aarav Malhotra",phone:"9876543210",email:"aarav@example.com"},
+ {id:"P102",name:"Priya Verma",phone:"9876501234",email:"priya@example.com"},
+ {id:"P103",name:"Rohan Gupta",phone:"9812345678",email:"rohan@example.com"},
+ {id:"P104",name:"Ananya Singh",phone:"9123456780",email:"ananya@example.com"}
+]);
+let appointments=load("appointments",[
+ {id:1,pid:"P101",name:"Aarav Malhotra",phone:"9876543210",doctor:1,date:today,time:"09:00",reason:"Regular checkup",status:"Accepted",token:"T001",queue:"Waiting"},
+ {id:2,pid:"P102",name:"Priya Verma",phone:"9876501234",doctor:2,date:today,time:"10:00",reason:"Skin consultation",status:"Accepted",token:"T002",queue:"Waiting"},
+ {id:3,pid:"P103",name:"Rohan Gupta",phone:"9812345678",doctor:1,date:today,time:"10:30",reason:"Heart consultation",status:"Pending",token:"",queue:""},
+ {id:4,pid:"P104",name:"Ananya Singh",phone:"9123456780",doctor:3,date:today,time:"11:00",reason:"Headache consultation",status:"Pending",token:"",queue:""}
+]);
+let notifications=load("notifications",[]);
+let nextToken=load("nextToken",3);
+
+function save(){
+ localStorage.setItem("medipulse_doctors",JSON.stringify(doctors));
+ localStorage.setItem("medipulse_patients",JSON.stringify(patients));
+ localStorage.setItem("medipulse_appointments",JSON.stringify(appointments));
+ localStorage.setItem("medipulse_notifications",JSON.stringify(notifications));
+ localStorage.setItem("medipulse_nextToken",JSON.stringify(nextToken));
+}
+function toast(msg){
+ const t=document.getElementById("toast");
+ t.textContent=msg;t.style.display="block";
+ setTimeout(()=>t.style.display="none",2800);
+}
+function docName(id){return doctors.find(d=>d.id==id)?.name||"Unknown doctor"}
+function escapeHTML(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function badge(status){
+ const c={Pending:"pending",Accepted:"available",Rejected:"rejected",Completed:"completed",Waiting:"pending","Now Serving":"booked",Skipped:"rejected"}[status]||"booked";
+ return `<span class="status ${c}">${escapeHTML(status)}</span>`;
+}
+function showPage(page){
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".nav-item[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ const titles={dashboard:"Dashboard Overview",appointments:"Appointment Management",patients:"Patient Records",doctors:"Doctor Availability",tokens:"Live Token Tracking",notifications:"Notification Centre"};
+ document.getElementById("pageTitle").textContent=titles[page];
+ renderAll();
+}
+document.querySelectorAll(".nav-item[data-page]").forEach(n=>n.addEventListener("click",()=>showPage(n.dataset.page)));
+
+function doctorBookings(id,date=today){
+ return appointments.filter(a=>a.doctor==id&&a.date===date&&a.status==="Accepted");
+}
+function isSlotAvailable(id,date,time,excludeId=null){
+ const d=doctors.find(x=>x.id==id);
+ return d&&!d.off&&d.slots.includes(time)&&!appointments.some(a=>
+ a.doctor==id&&a.date===date&&a.time===time&&a.status==="Accepted"&&a.id!==excludeId);
+}
+function notify(a,message,type){
+ notifications.unshift({id:Date.now()+Math.random(),pid:a.pid,name:a.name,phone:a.phone,message,type,status:"Sent",time:new Date().toLocaleString("en-IN")});
+}
+function updateDashboard(){
+ document.getElementById("totalPatients").textContent=patients.length;
+ document.getElementById("totalAppointments").textContent=appointments.filter(a=>a.date===today&&a.status==="Accepted").length;
+ document.getElementById("pendingRequests").textContent=appointments.filter(a=>a.status==="Pending").length;
+ document.getElementById("waitingPatients").textContent=appointments.filter(a=>a.date===today&&a.queue==="Waiting").length;
+ document.getElementById("requestCount").textContent=appointments.filter(a=>a.status==="Pending").length+" Pending";
+}
+function renderRecent(){
+ document.getElementById("recentAppointments").innerHTML=appointments.slice(0,5).map(a=>`
+ <tr><td><strong>${escapeHTML(a.name)}</strong></td><td>${escapeHTML(docName(a.doctor))}</td>
+ <td>${escapeHTML(a.time)}</td><td>${badge(a.status)}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">No appointments yet</td></tr>`;
+}
+function renderDoctorOverview(){
+ document.getElementById("doctorOverview").innerHTML=doctors.map(d=>{
+ const booked=doctorBookings(d.id).length,remaining=d.off?0:Math.max(0,d.slots.length-booked);
+ const percent=d.slots.length?booked/d.slots.length*100:0;
+ return `<div class="doctor">
+ <div class="doctor-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+ <div class="doctor-info"><strong>${escapeHTML(d.name)}</strong><small>${escapeHTML(d.specialty)} · ${d.off?"Unavailable":remaining+" slots free"}</small>
+ <div class="progress"><span style="width:${percent}%"></span></div></div>
+ <div class="doctor-count">${booked}/${d.slots.length}</div></div>`;
+ }).join("");
+}
+function renderDashboardQueue(){
+ const q=appointments.filter(a=>a.date===today&&a.token&&["Waiting","Now Serving"].includes(a.queue)).sort((a,b)=>a.token.localeCompare(b.token));
+ document.getElementById("dashboardQueue").innerHTML=q.slice(0,4).map(a=>`
+ <div class="queue-item"><div class="token">${escapeHTML(a.token)}</div>
+ <div class="queue-info"><strong>${escapeHTML(a.name)}</strong><small>${escapeHTML(docName(a.doctor))} · ${escapeHTML(a.time)}</small></div>${badge(a.queue)}</div>`).join("")||'<div class="empty">No patients in the queue</div>';
+}
+function renderAppointments(){
+ const q=document.getElementById("appointmentSearch").value.toLowerCase();
+ const f=document.getElementById("appointmentFilter").value;
+ const list=appointments.filter(a=>(f==="All"||a.status===f)&&[a.name,a.phone,docName(a.doctor)].join(" ").toLowerCase().includes(q));
+ document.getElementById("appointmentTable").innerHTML=list.map(a=>`
+ <tr><td><strong>${escapeHTML(a.name)}</strong></td><td>${escapeHTML(a.phone)}</td>
+ <td>${escapeHTML(docName(a.doctor))}</td><td>${escapeHTML(a.date)}<br>${escapeHTML(a.time)}</td>
+ <td>${escapeHTML(a.token||"—")}</td><td>${badge(a.status)}</td><td>
+ ${a.status==="Pending"?`<button class="btn btn-green mini-btn" onclick="acceptAppointment(${a.id})">Accept</button> <button class="btn btn-red mini-btn" onclick="rejectAppointment(${a.id})">Reject</button>`:"—"}
+ </td></tr>`).join("")||'<tr><td colspan="7" class="empty">No matching appointments</td></tr>';
+}
+function acceptAppointment(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.status!=="Pending")return;
+ if(!isSlotAvailable(a.doctor,a.date,a.time)){
+ toast("This doctor's slot is unavailable!");
+ return;
+ }
+ a.status="Accepted";
+ a.token="T"+String(nextToken++).padStart(3,"0");
+ a.queue="Waiting";
+ notify(a,`Appointment accepted. Your token number is ${a.token}. Please arrive before ${a.time}.`,"Appointment confirmation");
+ notify(a,`Your token ${a.token} has been generated.`,"Token generation");
+ save();renderAll();toast("Appointment accepted and token generated!");
+}
+function rejectAppointment(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.status!=="Pending")return;
+ if(!confirm("Are you sure you want to reject this appointment?"))return;
+ a.status="Rejected";notify(a,"Your appointment request has been rejected. Please contact the hospital for assistance.","Appointment rejection");
+ save();renderAll();toast("Appointment rejected.");
+}
+function renderPatients(){
+ const q=document.getElementById("patientSearch").value.toLowerCase();
+ const list=patients.filter(p=>[p.id,p.name,p.phone,p.email].join(" ").toLowerCase().includes(q));
+ document.getElementById("patientTable").innerHTML=list.map(p=>{
+ const count=appointments.filter(a=>a.pid===p.id).length;
+ return `<tr><td>${escapeHTML(p.id)}</td><td><strong>${escapeHTML(p.name)}</strong></td>
+ <td>${escapeHTML(p.phone)}</td><td>${escapeHTML(p.email)}</td><td>${count}</td>
+ <td><button class="btn btn-light mini-btn" onclick="patientDetails('${p.id}')">View details</button></td></tr>`;
+ }).join("")||'<tr><td colspan="6" class="empty">No patients found</td></tr>';
+}
+function patientDetails(id){
+ const p=patients.find(x=>x.id===id);
+ const records=appointments.filter(a=>a.pid===id);
+ openModal("Patient Details",`
+ <p><b>Name:</b> ${escapeHTML(p.name)}</p><br>
+ <p><b>Patient ID:</b> ${escapeHTML(p.id)}</p><br>
+ <p><b>Contact:</b> ${escapeHTML(p.phone)}</p><br>
+ <p><b>Email:</b> ${escapeHTML(p.email)}</p><br>
+ <b>Appointment History</b><br><br>
+ ${records.map(a=>`${escapeHTML(a.date)} · ${escapeHTML(docName(a.doctor))} · ${badge(a.status)}`).join("<br><br>")||"No appointments"}
+ `,()=>closeModal());
+}
+function addPatient(){
+ openModal("Register Patient",`
+ <div class="field"><label>Full name</label><input id="newName" required></div>
+ <div class="field"><label>Contact number</label><input id="newPhone" required></div>
+ <div class="field"><label>Email address</label><input id="newEmail" type="email"></div>
+ `,()=>{
+ const name=document.getElementById("newName").value.trim();
+ const phone=document.getElementById("newPhone").value.trim();
+ const email=document.getElementById("newEmail").value.trim();
+ if(!name||!phone){toast("Enter patient name and contact number.");return;}
+ patients.push({id:"P"+Date.now().toString().slice(-6),name,phone,email});
+ save();closeModal();renderAll();toast("Patient registered successfully!");
+ });
+}
+function renderDoctors(){
+ const date=document.getElementById("slotDate").value||today;
+ const filter=document.getElementById("doctorFilter").value;
+ const list=doctors.filter(d=>{
+ const booked=doctorBookings(d.id,date).length;
+ const status=d.off?"Unavailable":booked===d.slots.length?"Fully Booked":"Available";
+ return filter==="All"||filter===status;
+ });
+ document.getElementById("doctorCards").innerHTML=list.map(d=>{
+ const booked=doctorBookings(d.id,date).length;
+ const free=d.off?0:d.slots.filter(t=>isSlotAvailable(d.id,date,t)).length;
+ const status=d.off?"Unavailable":free===0?"Fully Booked":"Available";
+ return `<div class="slot-card">
+ <div style="display:flex;justify-content:space-between;gap:6px">
+ <h4>${escapeHTML(d.name)}</h4>${badge(status)}</div>
+ <p>${escapeHTML(d.specialty)} · ${escapeHTML(d.hours)}</p>
+ <div class="slot-time"><span>Total slots</span><b>${d.slots.length}</b></div>
+ <div class="slot-time"><span>Booked</span><b>${booked}</b></div>
+ <div class="slot-time"><span>Remaining</span><b style="color:var(--green)">${free}</b></div>
+ <div class="progress"><span style="width:${booked/d.slots.length*100}%"></span></div>
+ <p style="margin-top:12px;font-weight:700;color:var(--text)">Daily time slots</p>
+ <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0">
+ ${d.slots.map(t=>`<span class="status ${!isSlotAvailable(d.id,date,t)?"rejected":"available"}">${t}</span>`).join("")}
+ </div>
+ <button class="btn ${d.off?"btn-green":"btn-orange"}" style="width:100%" onclick="toggleDoctor(${d.id})">${d.off?"Mark Available":"Mark Unavailable"}</button>
+ </div>`;
+ }).join("")||'<div class="empty">No doctors match this filter</div>';
+}
+function toggleDoctor(id){
+ const d=doctors.find(x=>x.id===id);
+ if(!d)return;
+ if(!d.off&&appointments.some(a=>a.doctor==id&&a.date===(document.getElementById("slotDate").value||today)&&a.status==="Accepted")){
+ toast("This doctor has accepted appointments. Manage them before marking unavailable.");
+ return;
+ }
+ d.off=!d.off;save();renderAll();toast(d.name+(d.off?" marked unavailable":" marked available"));
+}
+function renderTokens(){
+ const list=appointments.filter(a=>a.token).sort((a,b)=>a.token.localeCompare(b.token));
+ document.getElementById("tokenTable").innerHTML=list.map(a=>`
+ <tr><td><strong>${escapeHTML(a.token)}</strong></td><td>${escapeHTML(a.name)}</td>
+ <td>${escapeHTML(docName(a.doctor))}</td><td>${escapeHTML(a.time)}</td><td>${badge(a.queue)}</td>
+ <td>${a.queue==="Waiting"?`<button class="btn btn-blue mini-btn" onclick="serveToken(${a.id})">Now Serving</button>`:a.queue==="Now Serving"?`<button class="btn btn-green mini-btn" onclick="completeToken(${a.id})">Complete</button>`:a.queue==="Completed"?"Done":`<button class="btn btn-light mini-btn" onclick="serveToken(${a.id})">Call again</button>`}</td></tr>`).join("")||'<tr><td colspan="6" class="empty">No tokens generated yet</td></tr>';
+}
+function serveToken(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a)return;
+ appointments.filter(x=>x.doctor===a.doctor&&x.queue==="Now Serving").forEach(x=>x.queue="Waiting");
+ a.queue="Now Serving";
+ notify(a,`Your turn is approaching. Token ${a.token}, please proceed to the doctor's room.`,"Turn notification");
+ save();renderAll();toast("Patient called. Turn alert logged.");
+}
+function completeToken(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a)return;
+ a.queue="Completed";a.status="Completed";
+ notify(a,`Your consultation is marked completed. Thank you for visiting.`,"Visit completion");
+ save();renderAll();toast("Consultation completed.");
+}
+function renderNotifications(){
+ const q=document.getElementById("notificationSearch").value.toLowerCase();
+ const f=document.getElementById("notificationFilter").value;
+ const list=notifications.filter(n=>(f==="All"||n.status===f)&&[n.name,n.phone,n.message,n.type].join(" ").toLowerCase().includes(q));
+ document.getElementById("notificationList").innerHTML=list.map(n=>`
+ <div class="notification">
+ <i class="fa-solid fa-message"></i>
+ <div><strong>${escapeHTML(n.type)} · ${escapeHTML(n.name)}</strong>
+ <small>${escapeHTML(n.message)}<br>${escapeHTML(n.time)} · ${escapeHTML(n.phone)}</small></div>
+ ${badge(n.status)}
+ <button class="btn btn-light mini-btn" onclick="resend(${n.id})">Resend</button>
+ </div>`).join("")||'<div class="empty">No notifications found</div>';
+}
+function resend(id){
+ const n=notifications.find(x=>x.id===id);
+ if(!n)return;
+ n.status="Sent";n.time=new Date().toLocaleString("en-IN");
+ save();renderNotifications();toast("Demo notification marked as sent.");
+}
+function queueAlert(){
+ openModal("Queue Delay Alert",`
+ <div class="field"><label>Select doctor</label><select id="delayDoctor">${doctors.map(d=>`<option value="${d.id}">${escapeHTML(d.name)}</option>`).join("")}</select></div>
+ <div class="field"><label>Estimated delay (minutes)</label><input type="number" id="delayMinutes" min="1" value="15"></div>
+ <div class="field"><label>Message</label><textarea id="delayMessage" rows="3">The doctor is running late. Thank you for your patience.</textarea></div>
+ `,()=>{
+ const id=Number(document.getElementById("delayDoctor").value);
+ const minutes=Number(document.getElementById("delayMinutes").value);
+ const msg=document.getElementById("delayMessage").value.trim();
+ if(!minutes||minutes<1||!msg){toast("Enter a valid delay and message.");return;}
+ const upcoming=appointments.filter(a=>a.doctor===id&&a.date===today&&["Waiting","Now Serving"].includes(a.queue));
+ upcoming.forEach(a=>notify(a,`${msg} Estimated delay: ${minutes} minutes.`,"Queue delay alert"));
+ save();closeModal();renderAll();toast("Delay alerts logged for "+upcoming.length+" patients.");
+ });
+}
+function openModal(title,body,action){
+ document.getElementById("modalTitle").textContent=title;
+ document.getElementById("modalBody").innerHTML=body;
+ document.getElementById("modalSave").onclick=action;
+ document.getElementById("modalBg").classList.add("show");
+}
+function closeModal(){document.getElementById("modalBg").classList.remove("show")}
+function logout(){
+ if(confirm("Log out of MediPulse Admin?"))toast("Demo logout. Connect your authentication system for secure logout.");
+}
+function renderAll(){
+ updateDashboard();renderRecent();renderDoctorOverview();
+ renderDashboardQueue();renderAppointments();renderPatients();
+ renderDoctors();renderTokens();renderNotifications();
+}
+save();
+renderAll();
+</script>
+</body>
+</html>

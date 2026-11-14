@@ -1,0 +1,233 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+    <div><h2>SkipQ</h2><small>SMART HOSPITAL SYSTEM</small></div>
+  </div>
+
+  <div class="nav-label">MAIN MENU</div>
+  <div class="nav-item active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></div>
+  <div class="nav-item" data-page="appointments"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></div>
+  <div class="nav-item" data-page="patients"><i class="fa-solid fa-users"></i><span>Patient Records</span></div>
+  <div class="nav-item" data-page="doctors"><i class="fa-solid fa-user-doctor"></i><span>Doctor Availability</span></div>
+  <div class="nav-item" data-page="manage-doctors"><i class="fa-solid fa-user-plus"></i><span>Manage Doctors</span></div>
+  <div class="nav-item" data-page="tokens"><i class="fa-solid fa-ticket"></i><span>Live Token Queue</span></div>
+  <div class="nav-item" data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></div>
+
+  <div class="nav-label">SYSTEM</div>
+  <div class="nav-item" onclick="queueAlert()"><i class="fa-solid fa-clock"></i><span>Queue Delay Alert</span></div>
+  <div class="sidebar-bottom">
+    <div class="admin-profile">
+      <div class="avatar">A</div>
+      <div><strong>Hospital Admin</strong><small>Administrator</small></div>
+    </div>
+    <div class="nav-item" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></div>
+  </div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <div>
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <p id="dateText">Your hospital command centre</p>
+    </div>
+    <div class="top-actions">
+      <div class="date-pill" id="todayDate"></div>
+      <button class="icon-btn" onclick="showPage('notifications')"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section class="section active" id="dashboard">
+    <div class="hero">
+      <div>
+        <h2>Good day, Administrator! 👋</h2>
+        <p>Your hospital is running smarter with SkipQ.<br>
+        Monitor appointment requests and registered doctors in one place.</p>
+      </div>
+      <div class="hero-badge"><i class="fa-solid fa-circle-check"></i> Command Centre Active</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-head"><span>Patients with Requests</span><div class="stat-icon" style="background:#e9f1ff;color:#3877d0"><i class="fa-solid fa-users"></i></div></div>
+        <strong id="totalPatients">0</strong><small>Unique patient contacts</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Appointment Requests</span><div class="stat-icon" style="background:#e4f8f4;color:#1a9d88"><i class="fa-solid fa-calendar-check"></i></div></div>
+        <strong id="totalAppointments">0</strong><small>Stored in Firestore</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Pending Requests</span><div class="stat-icon" style="background:#fff3e4;color:#df9942"><i class="fa-solid fa-hourglass-half"></i></div></div>
+        <strong id="pendingRequests">0</strong><small>Awaiting approval</small>
+      </div>
+      <div class="stat">
+        <div class="stat-head"><span>Patients Waiting</span><div class="stat-icon" style="background:#f2eaff;color:#9565c9"><i class="fa-solid fa-ticket"></i></div></div>
+        <strong id="waitingPatients">—</strong><small>Queue data unavailable</small>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-calendar-week"></i> Recent Appointment Requests</h3><button class="btn btn-light" onclick="showPage('appointments')">View all</button></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>PATIENT</th><th>DOCTOR</th><th>REQUESTED</th><th>STATUS</th></tr></thead>
+          <tbody id="recentAppointments"></tbody></table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-user-doctor"></i> Registered Doctors</h3><button class="btn btn-light" onclick="showPage('doctors')">Details</button></div>
+        <div class="doctor-list" id="doctorOverview"></div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-wave-square"></i> Live Patient Queue</h3><span class="status pending">NOT CONNECTED</span></div>
+        <div class="queue-list" id="dashboardQueue"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-shield-heart"></i> System Health</h3></div>
+        <div class="notification"><i class="fa-solid fa-calendar-check"></i><div><strong>Appointment Requests</strong><small>Firestore storage enabled</small></div><span class="status available">Active</span></div>
+        <div class="notification"><i class="fa-solid fa-ticket"></i><div><strong>Token Management</strong><small>Queue data not connected</small></div><span class="status pending">Unavailable</span></div>
+        <div class="notification"><i class="fa-solid fa-message"></i><div><strong>Notifications</strong><small>Delivery provider not connected</small></div><span class="status pending">Unavailable</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPOINTMENTS -->
+  <section class="section" id="appointments">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Appointment Requests</h3>
+        <span class="status pending" id="requestCount">0 Pending</span>
+      </div>
+      <div class="toolbar">
+        <input class="search" id="appointmentSearch" placeholder="Search patient or doctor..." oninput="renderAppointments()">
+        <select id="appointmentFilter" onchange="renderAppointments()">
+          <option value="All">All Statuses</option>
+          <option>Pending</option><option>Accepted</option>
+          <option>Verified</option><option>Rejected</option><option>Completed</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>PATIENT</th><th>AGE</th><th>CONTACT</th><th>DOCTOR</th><th>REQUESTED</th><th>PATIENTS AHEAD</th><th>TOKEN</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody id="appointmentTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATIENTS -->
+  <section class="section" id="patients">
+    <div class="panel">
+      <div class="panel-head"><h3>Patients with Appointment Requests</h3></div>
+      <div class="toolbar">
+      <input class="search" id="patientSearch" placeholder="Search patient name or phone..." oninput="renderPatients()">
+      </div>
+      <div class="table-wrap">
+      <table><thead><tr><th>NAME</th><th>AGE</th><th>CONTACT</th><th>REQUESTS</th><th>ACTION</th></tr></thead>
+        <tbody id="patientTable"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCTORS -->
+  <section class="section" id="doctors">
+    <div class="panel">
+      <div class="panel-head"><h3>Registered Doctors</h3><span class="status available">FIRESTORE</span></div>
+      <div class="alert"><i class="fa-solid fa-circle-info"></i> Doctor profiles are loaded from Firestore. Appointment availability is not configured in the database.</div>
+      <div class="slot-grid" id="firestoreDoctorCards"><div class="empty">Loading doctors...</div></div>
+    </div>
+  </section>
+
+  <!-- DOCTOR MANAGEMENT -->
+  <section class="section" id="manage-doctors">
+    <div class="panel">
+      <div class="panel-head"><h3>Add a Doctor</h3></div>
+      <form id="doctorForm">
+        <div class="doctor-form-grid">
+          <div class="field"><label for="doctorName">Full name</label><input id="doctorName" name="name" required maxlength="100"></div>
+          <div class="field">
+            <label for="doctorSpecialty">Specialty</label>
+            <select id="doctorSpecialty" name="specialty" required>
+              <option value="" selected disabled>Select a department</option>
+              <option>Cardiology</option>
+              <option>Neurology</option>
+              <option>Orthopedics</option>
+              <option>Dermatology</option>
+              <option>Pediatrics</option>
+              <option>Gynecology</option>
+              <option>Ophthalmology</option>
+              <option>ENT</option>
+              <option>Dentistry</option>
+              <option>General Medicine</option>
+              <option>Gastroenterology</option>
+              <option>Pulmonology</option>
+              <option>Urology</option>
+              <option>Oncology</option>
+              <option>Psychiatry</option>
+              <option>Endocrinology</option>
+            </select>
+          </div>
+          <div class="field"><label for="doctorPhone">Contact number</label><input id="doctorPhone" name="phone" type="tel" required maxlength="30"></div>
+          <div class="field"><label for="doctorEmail">Email address</label><input id="doctorEmail" name="email" type="email" maxlength="254"></div>
+          <div class="field"><label for="doctorHours">Working hours</label><input id="doctorHours" name="hours" placeholder="09:00 - 17:00" required maxlength="100"></div>
+        </div>
+        <button class="btn btn-blue" type="submit" id="doctorSubmit">Add Doctor</button>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <div class="panel-head"><h3>Registered Doctors</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>NAME</th><th>SPECIALTY</th><th>CONTACT</th><th>EMAIL</th><th>WORKING HOURS</th></tr></thead>
+          <tbody id="managedDoctorTable"><tr><td colspan="5" class="empty">Loading doctors...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section class="section" id="tokens">
+    <div class="panel">
+      <div class="panel-head"><h3>Live Token Tracking</h3><span class="status available">QUEUE MONITOR</span></div>
+      <div class="alert">Manage the live queue by doctor. Only one appointment per doctor can be marked "Now Serving"; complete it or return it to the queue before serving the next patient.</div>
+      <div class="toolbar">
+        <select id="tokenDoctorFilter" onchange="renderTokens()"><option value="">All doctors</option></select>
+        <button class="btn btn-light" type="button" onclick="loadAppointmentRequests()">Refresh Queue</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>TOKEN</th><th>PATIENT</th><th>DOCTOR</th><th>TIME</th><th>QUEUE STATUS</th><th>ACTION</th></tr></thead>
+        <tbody id="tokenTable"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTIFICATIONS -->
+  <section class="section" id="notifications">
+    <div class="panel">
+      <div class="panel-head"><h3>Patient Notification Monitoring</h3><span class="status available">MESSAGE LOG</span></div>
+      <div class="alert">Monitor confirmation, rejection, token and turn-alert messages. This demo records simulated delivery statuses; connect an SMS or messaging provider for real delivery.</div>
+      <div class="toolbar">
+        <input class="search" id="notificationSearch" placeholder="Search notifications..." oninput="renderNotifications()">
+        <select id="notificationFilter" onchange="renderNotifications()"><option value="All">All statuses</option><option>Sent</option><option>Failed</option><option>Pending</option></select>
+      </div>
+      <div id="notificationList"></div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Details</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-light" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>

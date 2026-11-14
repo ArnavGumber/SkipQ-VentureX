@@ -1,0 +1,589 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKIPQ | Healthcare, Without the Wait</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+ --navy:#071e2c;
+ --navy2:#0c2d3b;
+ --teal:#18b6a4;
+ --mint:#b8f2e8;
+ --white:#fff;
+ --bg:#f5faf9;
+ --text:#15313b;
+ --muted:#82939a;
+ --line:#e3edeb;
+ --orange:#ffb35c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden}
+button,a{font:inherit}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer}
+.nav{
+ position:fixed;top:0;width:100%;height:76px;padding:0 7%;
+ display:flex;align-items:center;justify-content:space-between;
+ background:rgba(7,30,44,.94);backdrop-filter:blur(15px);
+ z-index:100;border-bottom:1px solid #ffffff15;
+}
+.logo{font:800 29px Outfit;color:white;letter-spacing:-1.5px}
+.logo span{color:var(--teal)}
+.navlinks{display:flex;gap:28px;align-items:center;color:#d4e4e7;font-size:12px}
+.navlinks a:hover{color:var(--mint)}
+.nav-buttons{display:flex;gap:10px}
+.btn{
+ border:0;border-radius:9px;padding:12px 19px;font-size:12px;
+ font-weight:800;transition:.25s;display:inline-flex;align-items:center;
+ justify-content:center;gap:9px
+}
+.btn-outline{border:1px solid #ffffff55;background:transparent;color:white}
+.btn-outline:hover{background:#ffffff18}
+.btn-primary{background:var(--teal);color:#062b34}
+.btn-primary:hover{background:var(--mint);transform:translateY(-2px)}
+.menu-btn{display:none;color:white;background:none;border:0;font-size:22px}
+.hero{
+ min-height:760px;background:
+ radial-gradient(ellipse at 80% 30%,#0d665e 0%,transparent 32%),
+ radial-gradient(ellipse at 10% 90%,#124456 0%,transparent 38%),
+ var(--navy);
+ color:white;padding:150px 7% 85px;position:relative;overflow:hidden
+}
+.hero:before{
+ content:"";position:absolute;width:470px;height:470px;
+ border:1px solid #ffffff0b;border-radius:50%;right:-130px;top:130px;
+ box-shadow:0 0 0 55px #ffffff05,0 0 0 110px #ffffff04
+}
+.hero-inner{max-width:1250px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:55px;align-items:center;position:relative;z-index:1}
+.pill{
+ display:inline-flex;gap:9px;align-items:center;border:1px solid #ffffff27;
+ background:#ffffff0d;padding:9px 14px;border-radius:30px;
+ font-size:10px;color:var(--mint);letter-spacing:1px;font-weight:800
+}
+.pulse{width:7px;height:7px;background:var(--teal);border-radius:50%;box-shadow:0 0 0 5px #18b6a426}
+.hero h1{font:800 clamp(44px,5.8vw,75px)/1.04 Outfit;letter-spacing:-3px;margin:25px 0}
+.hero h1 span{color:var(--teal)}
+.hero-copy{font-size:14px;line-height:1.9;color:#b4c9ce;max-width:500px}
+.hero-actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.hero-note{margin-top:28px;color:#9cb4bb;font-size:11px;display:flex;gap:20px;flex-wrap:wrap}
+.hero-note i{color:var(--teal);margin-right:6px}
+.dashboard{
+ background:#f7fbfa;border-radius:22px;padding:22px;color:var(--text);
+ box-shadow:0 30px 90px #0005;transform:rotate(1deg);
+ animation:float 5s ease-in-out infinite;position:relative
+}
+@keyframes float{50%{transform:translateY(-10px) rotate(0deg)}}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.dash-top strong{font:700 17px Outfit}
+.live{background:#e2f7ef;color:#23865d;padding:7px 10px;border-radius:20px;font-size:9px;font-weight:800}
+.live i{font-size:7px;margin-right:5px}
+.dash-welcome{font-size:11px;color:var(--muted)}
+.token-box{margin-top:17px;padding:19px;background:var(--navy);color:white;border-radius:15px}
+.token-label{font-size:9px;color:#9ab3bc;letter-spacing:1px}
+.token-number{font:800 48px Outfit;color:var(--mint);margin:7px 0}
+.token-bottom{display:flex;justify-content:space-between;font-size:10px;color:#bed1d5}
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.stat{background:white;border:1px solid var(--line);padding:14px;border-radius:12px}
+.stat small{font-size:9px;color:var(--muted)}
+.stat strong{display:block;font:700 20px Outfit;margin-top:6px}
+.queue-progress{margin-top:16px;background:white;border:1px solid var(--line);padding:15px;border-radius:12px}
+.queue-progress div:first-child{display:flex;justify-content:space-between;font-size:10px;font-weight:700}
+.progress{height:7px;background:#e7efed;border-radius:10px;margin-top:12px;overflow:hidden}
+.progress span{display:block;width:68%;height:100%;background:var(--teal);border-radius:10px}
+.dash-doctor{display:flex;align-items:center;gap:10px;margin-top:15px}
+.doctor-icon{width:35px;height:35px;border-radius:50%;background:#d9f2ec;display:grid;place-items:center;color:#0b8b7e}
+.dash-doctor small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.dash-doctor strong{font-size:11px}
+.float-tag{
+ position:absolute;right:-25px;bottom:45px;background:white;color:var(--text);
+ padding:13px 16px;border-radius:12px;box-shadow:0 10px 35px #0002;
+ font-size:10px;font-weight:800;animation:float 4s ease-in-out infinite
+}
+.float-tag i{color:var(--teal);margin-right:7px}
+.section{padding:95px 7%;max-width:1450px;margin:auto}
+.center{text-align:center}
+.kicker{font-size:10px;color:#078e83;font-weight:800;letter-spacing:2px;margin-bottom:13px}
+.section h2{font:800 clamp(29px,3.8vw,45px)/1.15 Outfit;letter-spacing:-1.3px}
+.section-sub{font-size:13px;line-height:1.8;color:var(--muted);max-width:620px;margin:13px auto 0}
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;margin-top:45px}
+.intro-art{
+ min-height:300px;border-radius:22px;background:linear-gradient(135deg,#d9f5ee,#b8e8e0);
+ display:grid;place-items:center;position:relative;overflow:hidden
+}
+.big-heart{font-size:110px;color:#087e79;filter:drop-shadow(0 15px 15px #0b625333)}
+.art-label{position:absolute;background:white;padding:13px 16px;border-radius:12px;font-size:10px;font-weight:800;box-shadow:0 8px 20px #0001}
+.art-label.one{top:30px;left:20px}
+.art-label.two{bottom:25px;right:20px}
+.intro-copy h3{font:700 25px Outfit;margin-bottom:15px}
+.intro-copy p{font-size:13px;line-height:1.9;color:var(--muted)}
+.check-list{display:grid;gap:14px;margin-top:24px}
+.check-item{display:flex;gap:12px;align-items:center;font-size:12px;font-weight:700}
+.check-item i{width:26px;height:26px;border-radius:8px;background:#ddf6ee;color:#098c79;display:grid;place-items:center}
+.dark-section{background:var(--navy);color:white;max-width:none}
+.dark-inner{max-width:1250px;margin:auto}
+.dark-section .section-sub{color:#9cb3ba}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:48px}
+.step{
+ padding:23px;border:1px solid #ffffff18;background:#ffffff08;
+ border-radius:16px;min-height:190px;position:relative;transition:.25s
+}
+.step:hover{background:#ffffff12;transform:translateY(-5px);border-color:#18b6a4}
+.step-no{font:800 30px Outfit;color:var(--teal);opacity:.9}
+.step i{font-size:19px;color:var(--mint);margin:15px 0}
+.step h3{font:700 15px Outfit;margin-bottom:9px}
+.step p{font-size:11px;line-height:1.7;color:#a9c1c7}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px;margin-top:45px}
+.feature{
+ background:white;border:1px solid var(--line);border-radius:17px;padding:24px;
+ min-height:210px;transition:.3s;position:relative;overflow:hidden
+}
+.feature:hover{transform:translateY(-6px);box-shadow:0 15px 35px #0a34400c}
+.feature-icon{width:47px;height:47px;background:#e3f7f2;color:#098b7d;border-radius:14px;display:grid;place-items:center;font-size:19px;margin-bottom:20px}
+.feature h3{font:700 16px Outfit;margin-bottom:9px}
+.feature p{font-size:11px;line-height:1.8;color:var(--muted)}
+.feature-tag{font-size:9px;color:#078d80;font-weight:800;letter-spacing:1px;margin-top:15px;display:inline-block}
+.fair-section{background:#e8f6f2;max-width:none}
+.fair-inner{max-width:1250px;margin:auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:55px;align-items:center}
+.fair-visual{
+ background:var(--navy);padding:32px;border-radius:22px;color:white;
+ position:relative;overflow:hidden
+}
+.fair-visual:after{content:"";position:absolute;width:220px;height:220px;border:1px solid #ffffff15;border-radius:50%;right:-80px;top:-80px;box-shadow:0 0 0 35px #ffffff08}
+.fair-visual .symbol{font-size:65px;color:var(--teal);margin-bottom:20px}
+.fair-visual h3{font:800 27px Outfit;line-height:1.2;max-width:280px}
+.fair-visual p{color:#a8c1c7;font-size:11px;line-height:1.8;margin-top:14px}
+.fair-copy h2{font:800 37px Outfit;line-height:1.15;margin-bottom:15px}
+.fair-copy h2 span{color:#079587}
+.fair-copy>p{font-size:12px;line-height:1.9;color:#617b80}
+.fair-points{display:grid;gap:16px;margin-top:24px}
+.fair-point{display:flex;gap:12px}
+.fair-point i{color:#078d80;font-size:17px;margin-top:2px}
+.fair-point strong{font-size:12px}
+.fair-point p{font-size:10px;color:#72888a;line-height:1.6;margin-top:4px}
+.demo-section{background:var(--navy);color:white;max-width:none}
+.demo-inner{max-width:1100px;margin:auto}
+.simulator{background:#f6fbfa;color:var(--text);padding:25px;border-radius:20px;margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:25px}
+.sim-left h3{font:700 19px Outfit;margin-bottom:7px}
+.sim-left p{font-size:11px;color:var(--muted);line-height:1.7}
+.sim-token{background:var(--navy);color:white;padding:22px;border-radius:15px;margin-top:18px}
+.sim-token small{color:#a8bec4;font-size:9px}
+.sim-token strong{display:block;font:800 44px Outfit;color:var(--mint);margin:7px 0}
+.sim-controls{display:flex;flex-direction:column;gap:12px;justify-content:center}
+.sim-row{background:white;border:1px solid var(--line);border-radius:12px;padding:14px}
+.sim-row label{font-size:10px;color:var(--muted);display:block;margin-bottom:8px}
+.sim-row strong{font:700 19px Outfit}
+.sim-controls input{width:100%;accent-color:var(--teal)}
+.sim-caption{font-size:10px;color:#819398;margin-top:12px}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.role{border:1px solid var(--line);background:white;padding:24px;border-radius:16px}
+.role-icon{font-size:24px;color:#0b9587;margin-bottom:18px}
+.role h3{font:700 17px Outfit;margin-bottom:10px}
+.role p{font-size:11px;color:var(--muted);line-height:1.8}
+.role ul{list-style:none;margin-top:15px;display:grid;gap:9px}
+.role li{font-size:10px;color:#587078}
+.role li i{color:#099486;margin-right:7px}
+.security{background:#f0f6f8}
+.security-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+.security-item{background:white;border:1px solid var(--line);padding:20px;border-radius:14px}
+.security-item i{color:#0a9587;font-size:20px;margin-bottom:14px}
+.security-item h3{font:700 13px Outfit;margin-bottom:7px}
+.security-item p{font-size:10px;line-height:1.7;color:var(--muted)}
+.faq-list{max-width:800px;margin:40px auto 0;display:grid;gap:10px}
+.faq{background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.faq-question{width:100%;background:white;border:0;padding:18px;text-align:left;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:var(--text)}
+.faq-question i{color:#0a9688;transition:.2s}
+.faq-answer{display:none;padding:0 18px 18px;font-size:11px;color:var(--muted);line-height:1.8}
+.faq.open .faq-answer{display:block}
+.faq.open .faq-question i{transform:rotate(45deg)}
+.cta{padding:85px 7%;background:linear-gradient(120deg,#0a665e,#0c9485);text-align:center;color:white}
+.cta h2{font:800 clamp(32px,4vw,47px) Outfit;letter-spacing:-1px}
+.cta p{font-size:12px;color:#d6f4ee;margin:15px auto 25px;line-height:1.8}
+.cta .btn{background:white;color:#086b62}
+.footer{background:#061923;color:#a7bdc3;padding:50px 7% 24px}
+.footer-grid{max-width:1250px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+.footer .logo{margin-bottom:15px}
+.footer p{font-size:11px;line-height:1.9;max-width:280px}
+.footer h4{color:white;font:700 13px Outfit;margin-bottom:16px}
+.footer a{display:block;font-size:11px;margin-bottom:12px}
+.footer a:hover{color:var(--teal)}
+.copyright{border-top:1px solid #ffffff17;margin-top:35px;padding-top:20px;text-align:center;font-size:10px;color:#78929a}
+.reveal{opacity:0;transform:translateY(22px);transition:.7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@media(max-width:900px){
+ .hero-inner{grid-template-columns:1fr;gap:45px}
+ .dashboard{max-width:550px;width:100%;margin:auto}
+ .steps{grid-template-columns:repeat(2,1fr)}
+ .feature-grid{grid-template-columns:repeat(2,1fr)}
+ .security-grid{grid-template-columns:repeat(2,1fr)}
+ .fair-inner{grid-template-columns:1fr}
+}
+@media(max-width:650px){
+ .nav{padding:0 5%;height:68px}
+ .navlinks{display:none;position:absolute;top:68px;left:0;width:100%;padding:22px;background:var(--navy);flex-direction:column;align-items:flex-start}
+ .navlinks.show{display:flex}
+ .nav-buttons .btn{padding:10px 12px;font-size:10px}
+ .menu-btn{display:block}
+ .hero{padding:125px 6% 65px;min-height:auto}
+ .hero h1{letter-spacing:-2px}
+ .float-tag{right:-5px;bottom:15px}
+ .section{padding:70px 6%}
+ .intro-grid,.simulator{grid-template-columns:1fr}
+ .steps,.feature-grid,.roles{grid-template-columns:1fr}
+ .security-grid{grid-template-columns:repeat(2,1fr)}
+ .fair-copy h2{font-size:30px}
+ .footer-grid{grid-template-columns:1fr 1fr}
+ .footer-grid>div:first-child{grid-column:span 2}
+}
+@media(prefers-reduced-motion:reduce){
+ *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+ <a href="./" class="logo">SKIP<span>Q</span></a>
+ <div class="navlinks" id="navLinks">
+  <a href="#about">About</a>
+  <a href="#how">How It Works</a>
+  <a href="#features">Features</a>
+  <a href="#fairness">Fairness</a>
+  <a href="#faq">FAQs</a>
+ </div>
+ <div class="nav-buttons">
+  <a href="./" class="btn btn-primary">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+ </div>
+ <button class="menu-btn" onclick="toggleMenu()" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+ <div class="hero-inner">
+  <div>
+   <div class="pill"><span class="pulse"></span> A SMARTER WAY TO EXPERIENCE HEALTHCARE</div>
+   <h1>Don't wait for<br>healthcare.<br><span>Let it move.</span></h1>
+   <p class="hero-copy">
+    Meet SKIPQ — your digital hospital companion. Discover doctors,
+    book appointments, receive digital tokens and follow your queue
+    with a simpler, more transparent experience.
+   </p>
+   <div class="hero-actions">
+    <a href="./" class="btn btn-primary">Start Your Journey <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="#how" class="btn btn-outline"><i class="fa-solid fa-play"></i> See How It Works</a>
+   </div>
+   <div class="hero-note">
+    <span><i class="fa-solid fa-shield-halved"></i> Privacy-conscious</span>
+    <span><i class="fa-solid fa-scale-balanced"></i> Fairness-focused</span>
+    <span><i class="fa-solid fa-clock"></i> Time-aware</span>
+   </div>
+  </div>
+
+  <div class="dashboard">
+   <div class="dash-top">
+    <strong><i class="fa-solid fa-heart-pulse" style="color:#0b9b8b"></i> Your Health Desk</strong>
+    <span class="live"><i class="fa-solid fa-circle"></i> DEMO PREVIEW</span>
+   </div>
+   <div class="dash-welcome">A glimpse of your SKIPQ experience</div>
+   <div class="token-box">
+    <div class="token-label">YOUR SAMPLE DIGITAL TOKEN</div>
+    <div class="token-number">A-024</div>
+    <div class="token-bottom"><span>General Medicine</span><span>Demo appointment</span></div>
+   </div>
+   <div class="dash-stats">
+    <div class="stat"><small>Queue position</small><strong>04</strong></div>
+    <div class="stat"><small>Appointment status</small><strong style="font-size:15px;color:#138b71">Approved</strong></div>
+   </div>
+   <div class="queue-progress">
+    <div><span>Queue progress</span><span style="color:#0a9887">Demo: 68%</span></div>
+    <div class="progress"><span></span></div>
+   </div>
+   <div class="dash-doctor">
+    <div class="doctor-icon"><i class="fa-solid fa-user-doctor"></i></div>
+    <div><strong>Sample doctor profile</strong><small>Doctor details appear in your dashboard</small></div>
+   </div>
+   <div class="float-tag"><i class="fa-solid fa-check-circle"></i> One organised experience</div>
+  </div>
+ </div>
+</header>
+
+<!-- INTRO -->
+<section class="section" id="about">
+ <div class="center reveal">
+  <div class="kicker">WELCOME TO A BETTER EXPERIENCE</div>
+  <h2>Hospitals are for healing.<br>Not for endless waiting.</h2>
+  <p class="section-sub">SKIPQ brings patients, doctors and hospital administration into one organised digital ecosystem.</p>
+ </div>
+ <div class="intro-grid reveal">
+  <div class="intro-art">
+   <i class="fa-solid fa-heart-pulse big-heart"></i>
+   <div class="art-label one"><i class="fa-solid fa-calendar-check" style="color:#0b9688"></i> Easier appointments</div>
+   <div class="art-label two"><i class="fa-solid fa-users" style="color:#0b9688"></i> Connected care</div>
+  </div>
+  <div class="intro-copy">
+   <h3>One platform. Three connected experiences.</h3>
+   <p>Traditional hospital visits can involve confusing booking processes, unclear waiting orders and difficulty finding the right specialist. SKIPQ aims to bring these steps together in a simple and transparent platform.</p>
+   <div class="check-list">
+    <div class="check-item"><i class="fa-solid fa-check"></i> Find relevant hospital departments</div>
+    <div class="check-item"><i class="fa-solid fa-check"></i> Explore doctors and available slots</div>
+    <div class="check-item"><i class="fa-solid fa-check"></i> Manage appointments digitally</div>
+    <div class="check-item"><i class="fa-solid fa-check"></i> Follow queue updates when available</div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section dark-section" id="how">
+ <div class="dark-inner">
+  <div class="center reveal">
+   <div class="kicker">YOUR JOURNEY, SIMPLIFIED</div>
+   <h2>From "I need a doctor" to<br>"I'm all set."</h2>
+   <p class="section-sub">A straightforward journey designed to make hospital visits more organised.</p>
+  </div>
+  <div class="steps reveal">
+   <div class="step"><div class="step-no">01</div><i class="fa-solid fa-user-plus"></i><h3>Create your account</h3><p>Register securely or log in to your existing patient account.</p></div>
+   <div class="step"><div class="step-no">02</div><i class="fa-solid fa-comment-medical"></i><h3>Find your department</h3><p>Describe your concern and explore relevant hospital departments.</p></div>
+   <div class="step"><div class="step-no">03</div><i class="fa-solid fa-user-doctor"></i><h3>Choose your doctor</h3><p>Compare doctor profiles, specialities and available appointment slots.</p></div>
+   <div class="step"><div class="step-no">04</div><i class="fa-solid fa-calendar-check"></i><h3>Request a booking</h3><p>Choose a slot and submit your appointment request for confirmation.</p></div>
+   <div class="step"><div class="step-no">05</div><i class="fa-solid fa-ticket"></i><h3>Receive your token</h3><p>After approval, view your digital appointment token.</p></div>
+   <div class="step"><div class="step-no">06</div><i class="fa-solid fa-chart-line"></i><h3>Follow your queue</h3><p>Check queue progress and updates when the hospital provides live data.</p></div>
+   <div class="step"><div class="step-no">07</div><i class="fa-solid fa-bell"></i><h3>Stay informed</h3><p>Receive important appointment and queue notifications when enabled.</p></div>
+   <div class="step"><div class="step-no">08</div><i class="fa-solid fa-hospital"></i><h3>Visit with clarity</h3><p>Know your appointment details before arriving at the hospital.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+ <div class="center reveal">
+  <div class="kicker">NOT JUST AN APPOINTMENT APP</div>
+  <h2>Meet the features that<br>make SKIPQ different.</h2>
+  <p class="section-sub">Thoughtful tools that help patients and hospitals stay organised.</p>
+ </div>
+ <div class="feature-grid reveal">
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div><h3>What's Buggin' You?</h3><p>Describe your concerns in everyday language and explore potentially relevant departments. This is navigation support, not a diagnosis.</p><span class="feature-tag">SMART NAVIGATION</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-bolt"></i></div><h3>Beat the Queue</h3><p>Explore available slots and identify earlier appointments based on the published schedule.</p><span class="feature-tag">SMART SCHEDULING</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-ticket"></i></div><h3>Digital Token</h3><p>View your appointment token and queue position after your request has been approved.</p><span class="feature-tag">DIGITAL QUEUE</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-stethoscope"></i></div><h3>Doctor Discovery</h3><p>Explore specialists, experience, department details and appointment availability.</p><span class="feature-tag">DOCTOR DIRECTORY</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-chart-simple"></i></div><h3>Queue Visibility</h3><p>Follow queue progress and estimated waiting information when reliable live updates are available.</p><span class="feature-tag">QUEUE TRANSPARENCY</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-comments"></i></div><h3>Patient Feedback</h3><p>Share feedback or report concerns through a structured complaint and support system.</p><span class="feature-tag">PATIENT VOICE</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-bell"></i></div><h3>Smart Notifications</h3><p>Stay informed about booking approvals, changes, reminders and queue updates.</p><span class="feature-tag">STAY UPDATED</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-sliders"></i></div><h3>Admin Command Centre</h3><p>Manage doctors, departments, appointments, slots, feedback and operational reports.</p><span class="feature-tag">HOSPITAL MANAGEMENT</span></div>
+  <div class="feature"><div class="feature-icon"><i class="fa-solid fa-scale-balanced"></i></div><h3>Fair Queue Principles</h3><p>Transparent booking rules, recorded changes and accountability help support equal treatment.</p><span class="feature-tag">EQUAL ACCESS</span></div>
+ </div>
+</section>
+
+<!-- FAIRNESS -->
+<section class="section fair-section" id="fairness">
+ <div class="fair-inner">
+  <div class="fair-visual reveal">
+   <div class="symbol"><i class="fa-solid fa-scale-balanced"></i></div>
+   <h3>Healthcare has no VIP lane.</h3>
+   <p>Every person deserves dignity, respect and fair access to healthcare. The rules should be clear, not influenced by connections or status.</p>
+  </div>
+  <div class="fair-copy reveal">
+   <div class="kicker">THE SKIPQ PROMISE</div>
+   <h2>One queue.<br><span>Equal respect.</span></h2>
+   <p>We believe healthcare access should never depend on someone's wealth, influence or personal connections. SKIPQ is designed to support transparent processes and accountable decisions.</p>
+   <div class="fair-points">
+    <div class="fair-point"><i class="fa-solid fa-circle-check"></i><div><strong>Same published booking rules</strong><p>Appointment allocation follows clear and consistently applied rules.</p></div></div>
+    <div class="fair-point"><i class="fa-solid fa-circle-check"></i><div><strong>No unauthorised queue jumping</strong><p>Queue changes and manual overrides should be controlled and recorded.</p></div></div>
+    <div class="fair-point"><i class="fa-solid fa-circle-check"></i><div><strong>Accountable administration</strong><p>Approvals, rejections and changes should have traceable records.</p></div></div>
+    <div class="fair-point"><i class="fa-solid fa-circle-check"></i><div><strong>Respect for every patient</strong><p>No discrimination based on caste, religion, gender, wealth or social background.</p></div></div>
+    <div class="fair-point"><i class="fa-solid fa-circle-check"></i><div><strong>Medical priority when necessary</strong><p>Emergencies and legally required accessibility arrangements follow documented clinical policies.</p></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- INTERACTIVE QUEUE DEMO -->
+<section class="section demo-section">
+ <div class="demo-inner">
+  <div class="center reveal">
+   <div class="kicker">A LITTLE INTERACTIVE PREVIEW</div>
+   <h2>See how a digital queue feels.</h2>
+   <p class="section-sub">Move the slider to explore a sample token position. This is a simulator, not a live hospital queue.</p>
+  </div>
+  <div class="simulator reveal">
+   <div class="sim-left">
+    <h3>Your sample queue journey</h3>
+    <p>Imagine having your appointment token and checking your position from your own dashboard.</p>
+    <div class="sim-token">
+     <small>YOUR DEMO TOKEN</small>
+     <strong id="simToken">A-024</strong>
+     <small>General Medicine • Illustrative data</small>
+    </div>
+    <p class="sim-caption">Demonstration only. Actual queue information requires a connected hospital system.</p>
+   </div>
+   <div class="sim-controls">
+    <div class="sim-row">
+     <label>Move the sample queue forward</label>
+     <input type="range" min="1" max="25" value="4" id="queueSlider">
+     <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:9px;color:#84949a"><span>Start</span><span>Near your turn</span></div>
+    </div>
+    <div class="sim-row"><label>YOUR SAMPLE QUEUE POSITION</label><strong id="simPosition">04</strong></div>
+    <div class="sim-row"><label>DEMO QUEUE PROGRESS</label><strong id="simProgress">68%</strong><div class="progress"><span id="simBar" style="width:68%"></span></div></div>
+    <div class="sim-row"><label>DEMO STATUS</label><strong id="simStatus" style="font-size:14px;color:#0a927d">Getting closer!</strong></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- USER ROLES -->
+<section class="section">
+ <div class="center reveal">
+  <div class="kicker">ONE ECOSYSTEM, THREE ROLES</div>
+  <h2>Everyone gets the right controls.</h2>
+  <p class="section-sub">Different dashboards, separate permissions and a connected workflow.</p>
+ </div>
+ <div class="roles reveal">
+  <div class="role">
+   <div class="role-icon"><i class="fa-solid fa-user"></i></div>
+   <h3>For Patients</h3>
+   <p>A simple dashboard to organise the healthcare journey.</p>
+   <ul>
+    <li><i class="fa-solid fa-check"></i> Manage personal profile</li>
+    <li><i class="fa-solid fa-check"></i> Find doctors and departments</li>
+    <li><i class="fa-solid fa-check"></i> Request and track appointments</li>
+    <li><i class="fa-solid fa-check"></i> View tokens and queue status</li>
+    <li><i class="fa-solid fa-check"></i> Submit feedback and complaints</li>
+   </ul>
+  </div>
+  <div class="role">
+   <div class="role-icon"><i class="fa-solid fa-user-doctor"></i></div>
+   <h3>For Doctors</h3>
+   <p>Tools to help manage schedules and patient appointments.</p>
+   <ul>
+    <li><i class="fa-solid fa-check"></i> View assigned appointments</li>
+    <li><i class="fa-solid fa-check"></i> Update availability</li>
+    <li><i class="fa-solid fa-check"></i> Manage appointment status</li>
+    <li><i class="fa-solid fa-check"></i> Update queue progress</li>
+    <li><i class="fa-solid fa-check"></i> Coordinate with hospital staff</li>
+   </ul>
+  </div>
+  <div class="role">
+   <div class="role-icon"><i class="fa-solid fa-building-shield"></i></div>
+   <h3>For Administrators</h3>
+   <p>A central command centre for hospital operations.</p>
+   <ul>
+    <li><i class="fa-solid fa-check"></i> Add and manage doctors</li>
+    <li><i class="fa-solid fa-check"></i> Control appointment slots</li>
+    <li><i class="fa-solid fa-check"></i> Review booking requests</li>
+    <li><i class="fa-solid fa-check"></i> Monitor queues and reports</li>
+    <li><i class="fa-solid fa-check"></i> Review feedback and audit logs</li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<!-- SECURITY -->
+<section class="section security">
+ <div class="center reveal">
+  <div class="kicker">TRUST IS PART OF THE EXPERIENCE</div>
+  <h2>Your information deserves protection.</h2>
+  <p class="section-sub">A responsible healthcare platform needs secure accounts, privacy and clear access controls.</p>
+ </div>
+ <div class="security-grid reveal">
+  <div class="security-item"><i class="fa-solid fa-lock"></i><h3>Secure Login</h3><p>Use a trusted authentication system with secure password handling and account recovery.</p></div>
+  <div class="security-item"><i class="fa-solid fa-user-shield"></i><h3>Role Permissions</h3><p>Patients, doctors and administrators receive different permissions.</p></div>
+  <div class="security-item"><i class="fa-solid fa-eye-slash"></i><h3>Patient Privacy</h3><p>Private patient information should only be available to authorised users.</p></div>
+  <div class="security-item"><i class="fa-solid fa-clipboard-check"></i><h3>Audit Records</h3><p>Important administrative actions should be traceable and reviewable.</p></div>
+ </div>
+ <p class="section-sub" style="font-size:10px;margin-top:22px">Security depends on proper backend implementation, access policies and configuration. This landing page does not itself provide authentication or data protection.</p>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+ <div class="center reveal">
+  <div class="kicker">GOT QUESTIONS?</div>
+  <h2>Let's clear things up.</h2>
+  <p class="section-sub">Everything you should know before getting started.</p>
+ </div>
+ <div class="faq-list reveal">
+  <div class="faq"><button class="faq-question">What exactly is SKIPQ?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">SKIPQ is a hospital appointment and queue management platform designed to connect patients, doctors and hospital administrators.</div></div>
+  <div class="faq"><button class="faq-question">How do I book an appointment?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">Create an account, explore departments, select a doctor and an available slot, and submit an appointment request. The hospital confirms it according to its booking policy.</div></div>
+  <div class="faq"><button class="faq-question">What is a digital token?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">A digital token identifies your place in a hospital's appointment or queue system after the relevant booking is confirmed.</div></div>
+  <div class="faq"><button class="faq-question">Does SKIPQ provide medical diagnosis?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">No. Its symptom-navigation feature is intended to help explore relevant departments. It does not diagnose conditions or replace medical advice.</div></div>
+  <div class="faq"><button class="faq-question">Can I get priority by paying extra?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">SKIPQ's fairness principle is based on transparent published booking rules, not paid queue jumping. Clinical emergencies and legally required accessibility arrangements must follow documented hospital policies.</div></div>
+  <div class="faq"><button class="faq-question">Is queue tracking always live?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">Live tracking requires an integrated hospital queue system that continuously updates token and appointment information. A disconnected demonstration page cannot provide live queue information.</div></div>
+  <div class="faq"><button class="faq-question">Is my personal information safe?<i class="fa-solid fa-plus"></i></button><div class="faq-answer">The production application must use secure authentication, appropriate backend permissions and privacy controls. Review the hospital's privacy policy before sharing personal information.</div></div>
+ </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+ <div class="kicker" style="color:#b8f2e8">YOUR NEXT HOSPITAL VISIT CAN BE DIFFERENT</div>
+ <h2>Less waiting.<br>More living.</h2>
+ <p>Make your healthcare journey more organised, transparent and convenient.<br>Welcome to SKIPQ.</p>
+ <a href="./" class="btn">Book your appointment <i class="fa-solid fa-arrow-right"></i></a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+ <div class="footer-grid">
+  <div>
+   <a href="#" class="logo">SKIP<span>Q</span></a>
+   <p>Healthcare should be about care, not unnecessary waiting. SKIPQ aims to make hospital journeys simpler, smarter and fairer.</p>
+  </div>
+  <div><h4>Explore</h4><a href="#about">About SKIPQ</a><a href="#how">How It Works</a><a href="#features">Features</a><a href="#fairness">Our Promise</a></div>
+  <div><h4>Get Started</h4><a href="./">Book Appointment</a></div>
+ </div>
+ <div class="copyright">© 2026 SKIPQ. All rights reserved. | A smarter healthcare experience.</div>
+</footer>
+
+<script>
+function toggleMenu(){
+ document.getElementById("navLinks").classList.toggle("show");
+}
+document.querySelectorAll(".navlinks a").forEach(a=>{
+ a.addEventListener("click",()=>document.getElementById("navLinks").classList.remove("show"));
+});
+
+// FAQ accordions
+document.querySelectorAll(".faq-question").forEach(button=>{
+ button.addEventListener("click",()=>{
+  const parent=button.parentElement;
+  const wasOpen=parent.classList.contains("open");
+  document.querySelectorAll(".faq").forEach(item=>item.classList.remove("open"));
+  if(!wasOpen)parent.classList.add("open");
+ });
+});
+
+// Interactive queue simulator
+const slider=document.getElementById("queueSlider");
+function updateSimulator(){
+ const position=Number(slider.value);
+ const progress=Math.round(((25-position)/24)*100);
+ document.getElementById("simPosition").textContent=String(position).padStart(2,"0");
+ document.getElementById("simProgress").textContent=progress+"%";
+ document.getElementById("simBar").style.width=progress+"%";
+ document.getElementById("simStatus").textContent=
+  position===1?"Your demo turn is next!":
+  position<=5?"Getting closer!":
+  position<=12?"Moving through the queue":"Your place is being tracked";
+ document.getElementById("simToken").textContent="A-"+String(20+position).padStart(3,"0");
+}
+slider.addEventListener("input",updateSimulator);
+updateSimulator();
+
+// Reveal animation
+const observer=new IntersectionObserver(entries=>{
+ entries.forEach(entry=>{
+  if(entry.isIntersecting){
+   entry.target.classList.add("visible");
+   observer.unobserve(entry.target);
+  }
+ });
+},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
+

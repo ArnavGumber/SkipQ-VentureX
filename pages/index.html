@@ -1,0 +1,830 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKIPQ | Find Your Care</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --primary:#087e8b;
+  --dark:#075b65;
+  --mint:#e8f7f5;
+  --bg:#f5f8fa;
+  --text:#19323a;
+  --muted:#71828a;
+  --border:#e5edef;
+  --white:#fff;
+  --shadow:0 12px 35px rgba(22,55,65,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.navbar{
+  height:75px;padding:0 7%;background:white;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10
+}
+.logo{font:800 29px 'Outfit';color:var(--primary);letter-spacing:-1px}
+.logo span{color:#f0a33a}
+.nav-right{display:flex;align-items:center;gap:23px;color:var(--muted);font-size:13px}
+.nav-right a{color:inherit;text-decoration:none}
+.profile{
+  width:39px;height:39px;border-radius:50%;background:var(--mint);
+  color:var(--primary);display:grid;place-items:center;font-weight:800
+}
+.hero{
+  padding:55px 7% 50px;
+  background:radial-gradient(circle at 90% 10%,#cceee9,transparent 30%),
+  linear-gradient(120deg,#effaf8,#f8fbfc)
+}
+.hero-inner{max-width:1200px;margin:auto}
+.eyebrow{color:var(--primary);font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:14px}
+.hero h1{font:800 clamp(32px,4vw,47px) 'Outfit';line-height:1.13;margin-bottom:14px}
+.hero h1 span{color:var(--primary)}
+.hero p{color:var(--muted);font-size:14px;line-height:1.7;max-width:610px}
+.search-card{
+  background:white;max-width:800px;margin-top:28px;padding:23px;
+  border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)
+}
+.search-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.search-title i{color:var(--primary);font-size:21px}
+.search-title h2{font:700 19px 'Outfit'}
+.search-card .hint{font-size:12px;color:var(--muted);margin-bottom:15px}
+.search-area{
+  display:flex;gap:10px;align-items:stretch
+}
+.search-area textarea{
+  flex:1;min-height:65px;resize:vertical;border:1px solid var(--border);
+  border-radius:12px;padding:13px;outline:none;font-size:13px
+}
+.search-area textarea:focus{border-color:var(--primary)}
+.search-actions{display:flex;flex-direction:column;gap:8px}
+.voice-btn,.find-btn{
+  border:0;border-radius:10px;padding:12px 17px;font-weight:700
+}
+.voice-btn{background:var(--mint);color:var(--primary)}
+.find-btn{background:var(--primary);color:white}
+.find-btn:hover{background:var(--dark)}
+.examples{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;align-items:center}
+.examples span{font-size:11px;color:var(--muted)}
+.example{
+  background:#f2f6f7;border:0;border-radius:20px;padding:7px 11px;
+  font-size:11px;color:#52666d
+}
+.container{max-width:1200px;margin:auto;padding:38px 7% 70px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+.section-head h2{font:700 24px 'Outfit'}
+.section-head p{color:var(--muted);font-size:12px;margin-top:5px}
+.count{background:var(--mint);color:var(--primary);padding:8px 13px;border-radius:30px;font-size:11px;font-weight:800}
+.results{
+  display:none;background:white;border:1px solid var(--border);
+  padding:22px;border-radius:18px;margin:25px 0;box-shadow:var(--shadow)
+}
+.results h2{font:700 21px 'Outfit';margin-bottom:7px}
+.results>p{font-size:12px;color:var(--muted);line-height:1.6}
+.result-list{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:17px}
+.result-card{border:1px solid var(--border);border-radius:14px;padding:17px}
+.result-card h3{font:700 15px 'Outfit';margin-bottom:6px}
+.result-card p{font-size:12px;color:var(--muted);line-height:1.6}
+.result-card button{margin-top:12px}
+.small-btn{border:0;background:var(--primary);color:white;padding:9px 13px;border-radius:9px;font-size:11px;font-weight:700}
+.warning{
+  background:#fff5e4;color:#895d17;border:1px solid #f2dfb9;
+  padding:13px;border-radius:11px;font-size:12px;line-height:1.6;margin-top:15px
+}
+.loading{display:none;text-align:center;padding:22px;color:var(--primary);font-size:13px}
+.loading i{animation:spin 1s linear infinite;font-size:22px;display:block;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
+.filter{
+  background:white;border:1px solid var(--border);padding:9px 15px;
+  border-radius:25px;font-size:11px;font-weight:700;color:var(--muted)
+}
+.filter.active,.filter:hover{background:var(--primary);color:white;border-color:var(--primary)}
+.department-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.dept-card{
+  background:white;border:1px solid var(--border);border-radius:17px;
+  padding:19px;cursor:pointer;transition:.25s;min-height:183px
+}
+.dept-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:#9bd6d0}
+.dept-card.selected{border:2px solid var(--primary);background:#f1fbf9}
+.dept-icon{
+  width:46px;height:46px;border-radius:14px;display:grid;
+  place-items:center;font-size:20px;margin-bottom:14px
+}
+.dept-card h3{font:700 15px 'Outfit';margin-bottom:7px}
+.dept-card p{font-size:11px;line-height:1.5;color:var(--muted);min-height:34px}
+.dept-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:10px;color:var(--muted)}
+.dept-bottom strong{color:var(--primary)}
+.empty{display:none;background:white;border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
+.banner{
+  background:linear-gradient(110deg,#075b65,#0b9b9b);
+  color:white;padding:25px 28px;border-radius:19px;margin:35px 0;
+  display:flex;align-items:center;justify-content:space-between;gap:15px
+}
+.banner h3{font:700 20px 'Outfit';margin-bottom:7px}
+.banner p{font-size:12px;color:#dcf3f1;line-height:1.6}
+.banner button{background:white;color:var(--dark);border:0;border-radius:10px;padding:12px 17px;font-size:11px;font-weight:800;white-space:nowrap}
+.doctors-section{display:none;scroll-margin-top:95px;margin-top:35px}
+.doctor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:20px}
+.doctor-card{background:white;border:1px solid var(--border);border-radius:16px;padding:19px;display:flex;gap:14px}
+.avatar{
+  width:53px;height:53px;min-width:53px;border-radius:15px;
+  background:var(--mint);color:var(--primary);display:grid;place-items:center;font-size:22px
+}
+.doctor-info{flex:1}
+.doctor-info h3{font:700 15px 'Outfit'}
+.doctor-info .speciality{font-size:11px;color:var(--muted);margin:5px 0 9px}
+.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
+.meta i{color:var(--primary)}
+.status{display:inline-block;padding:6px 10px;border-radius:20px;font-size:10px;font-weight:800;margin-top:11px}
+.available{background:#e6f7eb;color:#26804b}
+.limited{background:#fff2d9;color:#a66a0a}
+.full{background:#fdeaea;color:#b94444}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.slot{
+  border:1px solid #b7ded8;background:#f1faf8;color:#087e8b;
+  padding:6px 9px;border-radius:7px;font-size:10px
+}
+.slot:disabled{background:#f0f1f2;color:#999;border-color:#e5e5e5;text-decoration:line-through}
+.book-btn{background:var(--primary);color:white;border:0;padding:10px 13px;border-radius:9px;font-size:11px;font-weight:700;margin-top:12px}
+.book-btn:disabled{background:#dce3e5;color:#78858a;cursor:not-allowed}
+.recent{margin-top:35px}
+.recent-list{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.recent-item{background:white;border:1px solid var(--border);padding:9px 13px;border-radius:9px;font-size:11px;cursor:pointer}
+.modal-bg{
+  display:none;position:fixed;inset:0;background:#102d36a6;z-index:30;
+  align-items:center;justify-content:center;padding:18px
+}
+.modal{background:white;width:100%;max-width:430px;border-radius:19px;padding:25px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.modal-head h2{font:700 21px 'Outfit'}
+.close{border:0;border-radius:50%;width:32px;height:32px;background:#eef3f4}
+.modal p{font-size:12px;color:var(--muted);line-height:1.6}
+.modal label{display:block;font-size:11px;font-weight:700;margin:14px 0 6px}
+.modal input,.modal select{width:100%;padding:12px;border:1px solid var(--border);border-radius:9px;outline-color:var(--primary)}
+.confirm{width:100%;padding:13px;background:var(--primary);color:white;border:0;border-radius:10px;margin-top:19px;font-weight:800}
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translate(-50%,100px);
+  background:#163b43;color:white;padding:13px 20px;border-radius:12px;
+  font-size:12px;z-index:50;transition:.3s;text-align:center;max-width:90%
+}
+.toast.show{transform:translate(-50%,0)}
+footer{background:#102e37;color:#d6e6e8;text-align:center;padding:27px 7%;font-size:11px}
+footer strong{color:white}
+@media(max-width:900px){.department-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){
+  .navbar{padding:0 5%}.nav-right{gap:12px}.nav-label{display:none}
+  .hero{padding:40px 5%}.container{padding:30px 5% 55px}
+  .department-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .dept-card{padding:14px}.doctor-grid,.result-list{grid-template-columns:1fr}
+  .search-area{flex-direction:column}.search-actions{flex-direction:row}
+  .search-actions button{flex:1}.banner{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:360px){.department-grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo">SKIP<span>Q</span></div>
+  <div class="nav-right">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <span class="nav-label">Patient Portal</span>
+    <div class="profile" id="profileIcon">P</div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">YOUR PERSONAL HEALTHCARE COMPANION</div>
+    <h1>Your health journey starts here.<br><span>Let's find your doctor!</span></h1>
+    <p>Tell us what's bothering you. SKIPQ can help you explore relevant departments and available doctors without the usual confusion.</p>
+
+    <div class="search-card">
+      <div class="search-title">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <h2>What's Buggin' You Today? 🤔</h2>
+      </div>
+      <p class="hint">Describe your symptoms in your own words. No complicated medical terms needed!</p>
+
+      <div class="search-area">
+        <textarea id="symptomInput" placeholder="Spill the symptoms! What's troubling you today? 👀"></textarea>
+        <div class="search-actions">
+          <button class="voice-btn" onclick="startVoice()" title="Voice search">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <button class="find-btn" onclick="findMyDoctor()">Find My Doctor <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <div class="examples">
+        <span>Try:</span>
+        <button class="example" onclick="setExample('I have a headache')">Headache</button>
+        <button class="example" onclick="setExample('I have joint pain')">Joint pain</button>
+        <button class="example" onclick="setExample('I have skin problems')">Skin problems</button>
+        <button class="example" onclick="setExample('I have tooth pain')">Tooth pain</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="loading" id="loading">
+    <i class="fa-solid fa-circle-notch"></i>
+    SKIPQ is finding relevant departments and doctors...
+  </section>
+
+  <section class="results" id="results">
+    <h2><i class="fa-solid fa-sparkles" style="color:#087e8b"></i> Your SKIPQ Matches</h2>
+    <p id="resultMessage"></p>
+    <div class="result-list" id="resultList"></div>
+    <div class="warning" id="resultWarning" style="display:none">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <strong>Important:</strong> This tool only suggests departments for navigation. It does not diagnose medical conditions or replace advice from a qualified healthcare professional.
+    </div>
+  </section>
+
+  <div class="section-head">
+    <div>
+      <h2>Explore Hospital Departments</h2>
+      <p>Choose a department to discover its doctors.</p>
+    </div>
+    <span class="count" id="deptCount">16 Departments</span>
+  </div>
+
+  <div class="filters">
+    <button class="filter active" data-filter="all">All Departments</button>
+    <button class="filter" data-filter="popular">Popular</button>
+    <button class="filter" data-filter="available">Slots Available</button>
+  </div>
+
+  <div class="department-grid" id="departmentGrid"></div>
+  <div class="empty" id="emptyState">No departments found.</div>
+
+  <div class="banner">
+    <div>
+      <h3><i class="fa-solid fa-bolt"></i> Beat the Queue with SKIPQ!</h3>
+      <p>Find doctors with the earliest available appointment slots.<br>Less waiting, more time for what matters.</p>
+    </div>
+    <button onclick="findEarliest()">Find Earliest Slot <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+
+  <section class="doctors-section" id="doctorsSection">
+    <div class="section-head">
+      <div>
+        <h2 id="doctorHeading">Available Doctors</h2>
+        <p id="doctorSubheading">Choose your preferred specialist.</p>
+      </div>
+      <span class="count" id="doctorCount"></span>
+    </div>
+    <div class="doctor-grid" id="doctorGrid"></div>
+  </section>
+
+  <section class="recent">
+    <div class="section-head">
+      <div>
+        <h2>Recently Explored</h2>
+        <p>Your recently viewed departments.</p>
+      </div>
+    </div>
+    <div class="recent-list" id="recentList">
+      <span style="font-size:12px;color:#71828a">Your explored departments will appear here.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SKIPQ</strong> — Your Health, Your Time. Skip the Wait!
+  <br><br>© 2026 SKIPQ Healthcare. Sample demonstration interface.
+</footer>
+
+<!-- BOOKING POPUP -->
+<div class="modal-bg" id="bookingModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Book Appointment</h2>
+      <button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <p id="bookingDoctor"></p>
+
+    <label for="patientName">Patient Name</label>
+    <input id="patientName" placeholder="Enter your full name">
+
+    <label for="patientPhone">Contact Number</label>
+    <input id="patientPhone" type="tel" maxlength="10" placeholder="10-digit mobile number">
+
+    <label for="appointmentDate">Appointment Date</label>
+    <input id="appointmentDate" type="date">
+
+    <label for="appointmentSlot">Select Time Slot</label>
+    <select id="appointmentSlot"></select>
+
+    <button class="confirm" onclick="confirmBooking()">Submit Appointment Request <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// -------------------------------------
+// DEPARTMENT DATA
+// -------------------------------------
+
+const departments = [
+ {id:"cardiology",name:"Cardiology",icon:"fa-heart-pulse",color:"#ffe8eb",iconColor:"#e65369",desc:"Heart and cardiovascular healthcare.",popular:true},
+ {id:"neurology",name:"Neurology",icon:"fa-brain",color:"#eee9ff",iconColor:"#8164cf",desc:"Brain and nervous system care.",popular:true},
+ {id:"orthopedics",name:"Orthopedics",icon:"fa-bone",color:"#fff0dc",iconColor:"#d68c35",desc:"Bones, joints and muscle care.",popular:true},
+ {id:"dermatology",name:"Dermatology",icon:"fa-hand-dots",color:"#e4f5ff",iconColor:"#398bb5",desc:"Skin, hair and nail treatments.",popular:false},
+ {id:"pediatrics",name:"Pediatrics",icon:"fa-child",color:"#e5f7eb",iconColor:"#3e9b68",desc:"Healthcare for children.",popular:true},
+ {id:"gynecology",name:"Gynecology",icon:"fa-person-pregnant",color:"#fce8f4",iconColor:"#c75a9d",desc:"Women's healthcare.",popular:false},
+ {id:"ophthalmology",name:"Ophthalmology",icon:"fa-eye",color:"#e4f3f3",iconColor:"#348d8b",desc:"Eye care and vision treatment.",popular:false},
+ {id:"ent",name:"ENT",icon:"fa-ear-listen",color:"#f1edff",iconColor:"#806bc3",desc:"Ear, nose and throat care.",popular:false},
+ {id:"dentistry",name:"Dentistry",icon:"fa-tooth",color:"#e6f3ff",iconColor:"#4387c6",desc:"Dental and oral healthcare.",popular:true},
+ {id:"general",name:"General Medicine",icon:"fa-user-doctor",color:"#e7f6f0",iconColor:"#399675",desc:"General health checkups.",popular:true},
+ {id:"gastro",name:"Gastroenterology",icon:"fa-stomach",color:"#fff1df",iconColor:"#d18b3b",desc:"Digestive system care.",popular:false},
+ {id:"pulmonology",name:"Pulmonology",icon:"fa-lungs",color:"#e7f0ff",iconColor:"#557dc0",desc:"Lung and respiratory care.",popular:false},
+ {id:"urology",name:"Urology",icon:"fa-droplet",color:"#e4f4ff",iconColor:"#398bb5",desc:"Urinary system healthcare.",popular:false},
+ {id:"oncology",name:"Oncology",icon:"fa-ribbon",color:"#fceafa",iconColor:"#bd68a6",desc:"Cancer care and support.",popular:false},
+ {id:"psychiatry",name:"Psychiatry",icon:"fa-brain",color:"#eeeaff",iconColor:"#7761b9",desc:"Mental health services.",popular:false},
+ {id:"endocrinology",name:"Endocrinology",icon:"fa-flask",color:"#e8f5ed",iconColor:"#4b9b6d",desc:"Hormonal and metabolic health.",popular:false}
+];
+
+// -------------------------------------
+// SAMPLE DOCTOR DATA
+// Add more doctors inside each department.
+// -------------------------------------
+
+const doctors = {
+ cardiology:[
+  {id:"D101",name:"Dr. Aarav Sharma",speciality:"Senior Cardiologist",exp:"12 years",rating:"4.9",slots:["09:30 AM","11:00 AM","02:00 PM"],status:"available"},
+  {id:"D102",name:"Dr. Meera Kapoor",speciality:"Heart Specialist",exp:"8 years",rating:"4.8",slots:["10:30 AM"],status:"limited"}
+ ],
+ neurology:[
+  {id:"D201",name:"Dr. Rohan Mehta",speciality:"Neurologist",exp:"10 years",rating:"4.9",slots:["09:00 AM","12:00 PM"],status:"available"},
+  {id:"D202",name:"Dr. Kavya Singh",speciality:"Neuro Physician",exp:"7 years",rating:"4.7",slots:[],status:"full"}
+ ],
+ orthopedics:[
+  {id:"D301",name:"Dr. Vikram Malhotra",speciality:"Orthopedic Surgeon",exp:"14 years",rating:"4.9",slots:["10:00 AM","01:00 PM"],status:"available"},
+  {id:"D302",name:"Dr. Ananya Rao",speciality:"Joint Specialist",exp:"6 years",rating:"4.8",slots:["11:30 AM"],status:"limited"}
+ ],
+ dermatology:[
+  {id:"D401",name:"Dr. Nisha Verma",speciality:"Dermatologist",exp:"9 years",rating:"4.8",slots:["09:30 AM","12:30 PM"],status:"available"},
+  {id:"D402",name:"Dr. Kabir Joshi",speciality:"Skin Specialist",exp:"5 years",rating:"4.6",slots:[],status:"full"}
+ ],
+ pediatrics:[
+  {id:"D501",name:"Dr. Priya Khanna",speciality:"Child Specialist",exp:"11 years",rating:"4.9",slots:["10:00 AM","01:00 PM"],status:"available"},
+  {id:"D502",name:"Dr. Aditya Bansal",speciality:"Pediatrician",exp:"7 years",rating:"4.7",slots:["11:00 AM"],status:"limited"}
+ ],
+ gynecology:[
+  {id:"D601",name:"Dr. Riya Sethi",speciality:"Gynecologist",exp:"12 years",rating:"4.9",slots:["09:00 AM","12:00 PM"],status:"available"},
+  {id:"D602",name:"Dr. Simran Gill",speciality:"Women's Health Specialist",exp:"8 years",rating:"4.8",slots:[],status:"full"}
+ ],
+ ophthalmology:[
+  {id:"D701",name:"Dr. Neha Arora",speciality:"Eye Specialist",exp:"10 years",rating:"4.9",slots:["10:00 AM","02:00 PM"],status:"available"},
+  {id:"D702",name:"Dr. Rahul Jain",speciality:"Ophthalmologist",exp:"6 years",rating:"4.7",slots:["12:00 PM"],status:"limited"}
+ ],
+ ent:[
+  {id:"D801",name:"Dr. Ishaan Sood",speciality:"ENT Specialist",exp:"9 years",rating:"4.8",slots:["09:30 AM"],status:"limited"},
+  {id:"D802",name:"Dr. Tanya Bose",speciality:"ENT Surgeon",exp:"7 years",rating:"4.7",slots:["11:00 AM","01:00 PM"],status:"available"}
+ ],
+ dentistry:[
+  {id:"D901",name:"Dr. Arjun Malhotra",speciality:"Dental Surgeon",exp:"10 years",rating:"4.9",slots:["09:00 AM","12:30 PM"],status:"available"},
+  {id:"D902",name:"Dr. Isha Nair",speciality:"Dentist",exp:"5 years",rating:"4.8",slots:[],status:"full"}
+ ],
+ general:[
+  {id:"D1001",name:"Dr. Sanjay Gupta",speciality:"General Physician",exp:"15 years",rating:"4.9",slots:["09:00 AM","11:00 AM","01:00 PM"],status:"available"},
+  {id:"D1002",name:"Dr. Pooja Das",speciality:"Internal Medicine",exp:"8 years",rating:"4.8",slots:["10:30 AM"],status:"limited"}
+ ],
+ gastro:[
+  {id:"D1101",name:"Dr. Karan Ahuja",speciality:"Gastroenterologist",exp:"11 years",rating:"4.9",slots:["10:00 AM","01:30 PM"],status:"available"},
+  {id:"D1102",name:"Dr. Shreya Roy",speciality:"Digestive Health Specialist",exp:"6 years",rating:"4.7",slots:[],status:"full"}
+ ],
+ pulmonology:[
+  {id:"D1201",name:"Dr. Manav Bhatia",speciality:"Pulmonologist",exp:"12 years",rating:"4.9",slots:["09:30 AM","12:00 PM"],status:"available"},
+  {id:"D1202",name:"Dr. Aditi Sen",speciality:"Respiratory Specialist",exp:"7 years",rating:"4.8",slots:["11:00 AM"],status:"limited"}
+ ],
+ urology:[
+  {id:"D1301",name:"Dr. Nitin Khurana",speciality:"Urologist",exp:"10 years",rating:"4.8",slots:["09:00 AM","12:00 PM"],status:"available"},
+  {id:"D1302",name:"Dr. Simar Kaur",speciality:"Urology Specialist",exp:"6 years",rating:"4.7",slots:["11:00 AM"],status:"limited"}
+ ],
+ oncology:[
+  {id:"D1401",name:"Dr. Vivek Sinha",speciality:"Medical Oncologist",exp:"15 years",rating:"4.9",slots:["10:00 AM","01:00 PM"],status:"available"},
+  {id:"D1402",name:"Dr. Ayesha Khan",speciality:"Oncology Specialist",exp:"9 years",rating:"4.8",slots:[],status:"full"}
+ ],
+ psychiatry:[
+  {id:"D1501",name:"Dr. Tara Malhotra",speciality:"Psychiatrist",exp:"11 years",rating:"4.9",slots:["10:00 AM","02:00 PM"],status:"available"},
+  {id:"D1502",name:"Dr. Neil Thomas",speciality:"Mental Health Specialist",exp:"7 years",rating:"4.8",slots:["11:30 AM"],status:"limited"}
+ ],
+ endocrinology:[
+  {id:"D1601",name:"Dr. Aman Bedi",speciality:"Endocrinologist",exp:"12 years",rating:"4.9",slots:["09:30 AM","01:00 PM"],status:"available"},
+  {id:"D1602",name:"Dr. Ritu Arora",speciality:"Diabetes Specialist",exp:"8 years",rating:"4.8",slots:["11:00 AM"],status:"limited"}
+ ]
+};
+
+// -------------------------------------
+// SYMPTOM-TO-DEPARTMENT MATCHING
+// This is navigation support, NOT diagnosis.
+// -------------------------------------
+
+const symptomMap = [
+ {keywords:["chest pain","heart","heartbeat","palpitation"],dept:"cardiology"},
+ {keywords:["headache","migraine","seizure","numbness","nerve","memory"],dept:"neurology"},
+ {keywords:["joint pain","knee","bone","back pain","fracture","shoulder"],dept:"orthopedics"},
+ {keywords:["skin","rash","acne","itching","hair fall","pimple"],dept:"dermatology"},
+ {keywords:["child","baby","infant"],dept:"pediatrics"},
+ {keywords:["period","menstrual","pregnancy","women's health"],dept:"gynecology"},
+ {keywords:["eye","vision","blurred vision","eyesight"],dept:"ophthalmology"},
+ {keywords:["ear","nose","throat","hearing","sinus"],dept:"ent"},
+ {keywords:["tooth","teeth","dental","gum","toothache"],dept:"dentistry"},
+ {keywords:["fever","cold","weakness","checkup","general","tired"],dept:"general"},
+ {keywords:["stomach","digestion","acidity","constipation","diarrhea","bloating"],dept:"gastro"},
+ {keywords:["cough","breathing","lungs","asthma","respiratory"],dept:"pulmonology"},
+ {keywords:["urine","urinary","kidney","bladder"],dept:"urology"},
+ {keywords:["cancer","tumour","tumor","oncology"],dept:"oncology"},
+ {keywords:["stress","anxiety","sleep","mental health","mood"],dept:"psychiatry"},
+ {keywords:["hormone","thyroid","diabetes","metabolism"],dept:"endocrinology"}
+];
+
+const emergencyWords = [
+ "severe chest pain","can't breathe","cannot breathe",
+ "difficulty breathing","unconscious","heavy bleeding",
+ "stroke","face drooping","sudden weakness"
+];
+
+let selectedDepartment=null;
+let selectedDoctor=null;
+let currentFilter="all";
+let recentDepartments=[];
+
+function renderDepartments(list=departments){
+ const grid=document.getElementById("departmentGrid");
+ grid.innerHTML="";
+ document.getElementById("deptCount").textContent=list.length+" Departments";
+ document.getElementById("emptyState").style.display=list.length?"none":"block";
+
+ list.forEach(dept=>{
+  const docList=doctors[dept.id]||[];
+  const hasSlots=docList.some(d=>d.slots.length>0);
+  const card=document.createElement("div");
+  card.className="dept-card";
+  card.dataset.id=dept.id;
+  card.innerHTML=`
+   <div class="dept-icon" style="background:${dept.color};color:${dept.iconColor}">
+    <i class="fa-solid ${dept.icon}"></i>
+   </div>
+   <h3>${dept.name}</h3>
+   <p>${dept.desc}</p>
+   <div class="dept-bottom">
+    <span>${docList.length} Doctors</span>
+    <strong>${hasSlots?"Slots available":"Fully booked"}</strong>
+    <i class="fa-solid fa-arrow-right"></i>
+   </div>`;
+  card.onclick=()=>selectDepartment(dept.id);
+  grid.appendChild(card);
+ });
+}
+
+function selectDepartment(id){
+ selectedDepartment=id;
+ document.querySelectorAll(".dept-card").forEach(c=>{
+  c.classList.toggle("selected",c.dataset.id===id);
+ });
+ const dept=departments.find(d=>d.id===id);
+ const list=doctors[id]||[];
+ document.getElementById("doctorsSection").style.display="block";
+ document.getElementById("doctorHeading").textContent=dept.name+" Doctors";
+ document.getElementById("doctorSubheading").textContent="Explore specialists and select an available appointment slot.";
+ document.getElementById("doctorCount").textContent=list.length+" Specialists";
+ renderDoctors(list);
+ addRecent(dept);
+ document.getElementById("doctorsSection").scrollIntoView({behavior:"smooth"});
+}
+
+function renderDoctors(list){
+ const grid=document.getElementById("doctorGrid");
+ grid.innerHTML="";
+ list.forEach(doc=>{
+  const statusText=doc.status==="available"?"Slots Available":doc.status==="limited"?"Limited Slots":"Fully Booked";
+  const card=document.createElement("div");
+  card.className="doctor-card";
+  const slots=doc.slots.length
+   ?doc.slots.map(slot=>`<button class="slot" onclick="openBooking('${doc.id}','${slot}')">${slot}</button>`).join("")
+   :'<span style="font-size:11px;color:#b94444">No appointment slots currently listed.</span>';
+
+  card.innerHTML=`
+   <div class="avatar"><i class="fa-solid fa-user-doctor"></i></div>
+   <div class="doctor-info">
+    <h3>${doc.name}</h3>
+    <div class="speciality">${doc.speciality}</div>
+    <div class="meta">
+     <span><i class="fa-solid fa-briefcase"></i> ${doc.exp}</span>
+     <span><i class="fa-solid fa-star"></i> ${doc.rating}</span>
+    </div>
+    <span class="status ${doc.status}">${statusText}</span>
+    <div class="slots">${slots}</div>
+    <button class="book-btn" ${doc.slots.length?"":"disabled"} onclick="openBooking('${doc.id}')">
+     Book Appointment <i class="fa-solid fa-arrow-right"></i>
+    </button>
+   </div>`;
+  grid.appendChild(card);
+ });
+}
+
+// -------------------------------------
+// SYMPTOM SEARCH
+// -------------------------------------
+
+function setExample(text){
+ document.getElementById("symptomInput").value=text;
+ findMyDoctor();
+}
+
+function findMyDoctor(){
+ const input=document.getElementById("symptomInput").value.trim().toLowerCase();
+ if(!input){showToast("Tell us what's bothering you first!");return;}
+
+ const loading=document.getElementById("loading");
+ const results=document.getElementById("results");
+ results.style.display="none";
+ loading.style.display="block";
+
+ setTimeout(()=>{
+  loading.style.display="none";
+  results.style.display="block";
+
+  const emergency=emergencyWords.some(word=>input.includes(word));
+  if(emergency){
+   document.getElementById("resultMessage").textContent=
+    "Your description may include an emergency warning sign.";
+   document.getElementById("resultList").innerHTML="";
+   document.getElementById("resultWarning").style.display="block";
+   document.getElementById("resultWarning").innerHTML=
+    "<strong>Seek immediate medical attention.</strong> Do not wait for an online appointment. Contact local emergency services or go to the nearest emergency department.";
+   results.scrollIntoView({behavior:"smooth"});
+   return;
+  }
+
+  const matches=symptomMap.filter(item=>
+   item.keywords.some(word=>input.includes(word))
+  );
+
+  const unique=[...new Set(matches.map(m=>m.dept))];
+
+  if(!unique.length){
+   document.getElementById("resultMessage").textContent=
+    "We couldn't confidently match those words to a department. Hospital staff can help you choose the right service.";
+   document.getElementById("resultList").innerHTML=
+    '<div class="result-card"><h3><i class="fa-solid fa-headset"></i> Need some help?</h3><p>Please contact the hospital reception or a qualified healthcare professional for guidance.</p></div>';
+   document.getElementById("resultWarning").style.display="block";
+   results.scrollIntoView({behavior:"smooth"});
+   return;
+  }
+
+  document.getElementById("resultMessage").textContent=
+   "Based on the words you entered, these departments may be relevant. This is not a medical diagnosis.";
+
+  document.getElementById("resultWarning").style.display="block";
+  document.getElementById("resultWarning").innerHTML=
+   "<strong>Remember:</strong> These are navigation suggestions only, not a diagnosis. A qualified healthcare professional can assess your concerns.";
+
+  const resultList=document.getElementById("resultList");
+  resultList.innerHTML="";
+
+  unique.forEach(id=>{
+   const dept=departments.find(d=>d.id===id);
+   const docList=doctors[id]||[];
+   const available=docList.filter(d=>d.slots.length>0);
+
+   const card=document.createElement("div");
+   card.className="result-card";
+   card.innerHTML=`
+    <h3>${dept.name}</h3>
+    <p>${dept.desc}</p>
+    <p style="margin-top:7px"><strong>${available.length}</strong> doctors with listed slots</p>
+    <button class="small-btn">Explore Doctors <i class="fa-solid fa-arrow-right"></i></button>`;
+   card.querySelector("button").onclick=()=>selectDepartment(id);
+   resultList.appendChild(card);
+  });
+
+  results.scrollIntoView({behavior:"smooth"});
+ },650);
+}
+
+// -------------------------------------
+// OPTIONAL VOICE INPUT
+// Browser speech recognition support varies.
+// -------------------------------------
+
+function startVoice(){
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){
+  showToast("Voice input is not supported in this browser. Please type instead.");
+  return;
+ }
+ const recognition=new SpeechRecognition();
+ recognition.lang="en-IN";
+ recognition.onresult=(event)=>{
+  document.getElementById("symptomInput").value=event.results[0][0].transcript;
+  showToast("Voice input captured!");
+ };
+ recognition.onerror=()=>showToast("Could not capture voice. Please try typing.");
+ recognition.start();
+}
+
+// -------------------------------------
+// FILTERS
+// -------------------------------------
+
+function applyFilter(filter){
+ currentFilter=filter;
+ document.querySelectorAll(".filter").forEach(btn=>{
+  btn.classList.toggle("active",btn.dataset.filter===filter);
+ });
+ let list=departments;
+ if(filter==="popular")list=departments.filter(d=>d.popular);
+ if(filter==="available")list=departments.filter(d=>
+  (doctors[d.id]||[]).some(doc=>doc.slots.length>0)
+ );
+ renderDepartments(list);
+}
+document.querySelectorAll(".filter").forEach(btn=>{
+ btn.addEventListener("click",()=>applyFilter(btn.dataset.filter));
+});
+
+// -------------------------------------
+// EARLIEST AVAILABLE SLOT
+// Uses sample slot times for demonstration.
+// -------------------------------------
+
+function timeMinutes(time){
+ const [clock,period]=time.split(" ");
+ let [h,m]=clock.split(":").map(Number);
+ if(period==="PM"&&h!==12)h+=12;
+ if(period==="AM"&&h===12)h=0;
+ return h*60+m;
+}
+
+function findEarliest(){
+ let best=null;
+ let bestDept=null;
+ departments.forEach(dept=>{
+  (doctors[dept.id]||[]).forEach(doc=>{
+   doc.slots.forEach(slot=>{
+    if(!best||timeMinutes(slot)<timeMinutes(best.slot)){
+     best={doc,slot};
+     bestDept=dept;
+    }
+   });
+  });
+ });
+ if(best){
+  selectDepartment(bestDept.id);
+  showToast("Earliest sample slot: "+best.slot+" with "+best.doc.name);
+ }
+}
+
+// -------------------------------------
+// RECENTLY VIEWED
+// -------------------------------------
+
+function addRecent(dept){
+ recentDepartments=[dept,...recentDepartments.filter(d=>d.id!==dept.id)].slice(0,5);
+ const area=document.getElementById("recentList");
+ area.innerHTML="";
+ recentDepartments.forEach(d=>{
+  const btn=document.createElement("button");
+  btn.className="recent-item";
+  btn.textContent=d.name;
+  btn.onclick=()=>selectDepartment(d.id);
+  area.appendChild(btn);
+ });
+}
+
+// -------------------------------------
+// APPOINTMENT BOOKING
+// -------------------------------------
+
+function openBooking(doctorId,preferredSlot){
+ selectedDoctor=null;
+ for(const dept of departments){
+  const found=(doctors[dept.id]||[]).find(d=>d.id===doctorId);
+  if(found){selectedDoctor=found;selectedDepartment=dept.id;break;}
+ }
+ if(!selectedDoctor)return;
+
+ document.getElementById("bookingDoctor").textContent=
+  selectedDoctor.name+" • "+selectedDoctor.speciality;
+
+ const slotSelect=document.getElementById("appointmentSlot");
+ slotSelect.innerHTML="";
+ selectedDoctor.slots.forEach(slot=>{
+  const option=document.createElement("option");
+  option.value=slot;
+  option.textContent=slot;
+  slotSelect.appendChild(option);
+ });
+ if(preferredSlot)slotSelect.value=preferredSlot;
+
+ const dateInput=document.getElementById("appointmentDate");
+ const today=new Date();
+ const localDate=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().split("T")[0];
+ dateInput.min=localDate;
+ dateInput.value=localDate;
+
+ document.getElementById("bookingModal").style.display="flex";
+}
+
+function closeModal(){
+ document.getElementById("bookingModal").style.display="none";
+}
+
+function confirmBooking(){
+ const name=document.getElementById("patientName").value.trim();
+ const phone=document.getElementById("patientPhone").value.trim();
+ const date=document.getElementById("appointmentDate").value;
+ const slot=document.getElementById("appointmentSlot").value;
+
+ if(!name||!/^[6-9]\d{9}$/.test(phone)||!date||!slot){
+  showToast("Please enter a valid name, 10-digit phone number, date and slot.");
+  return;
+ }
+ if(!selectedDoctor)return;
+
+ const booking={
+  id:"SKQ-"+Date.now(),
+  patientName:name,
+  phone:phone,
+  doctorId:selectedDoctor.id,
+  doctorName:selectedDoctor.name,
+  department:selectedDepartment,
+  date:date,
+  slot:slot,
+  status:"Pending",
+  createdAt:new Date().toISOString()
+ };
+
+ try{
+  const existing=JSON.parse(localStorage.getItem("skipqAppointments")||"[]");
+
+  const duplicate=existing.some(item=>
+   item.doctorId===booking.doctorId&&
+   item.date===booking.date&&
+   item.slot===booking.slot&&
+   item.status!=="Rejected"
+  );
+
+  if(duplicate){
+   showToast("This demo slot already has a request. Please choose another.");
+   return;
+  }
+
+  existing.push(booking);
+  localStorage.setItem("skipqAppointments",JSON.stringify(existing));
+
+  closeModal();
+  showToast("Request submitted! Waiting for admin approval.");
+ }catch(error){
+  showToast("Could not save your request. Please try again.");
+ }
+}
+
+// -------------------------------------
+// TOAST + INITIAL SETUP
+// -------------------------------------
+
+function showToast(message){
+ const toast=document.getElementById("toast");
+ toast.textContent=message;
+ toast.classList.add("show");
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>toast.classList.remove("show"),3500);
+}
+
+document.getElementById("bookingModal").addEventListener("click",e=>{
+ if(e.target.id==="bookingModal")closeModal();
+});
+
+try{
+ const user=JSON.parse(localStorage.getItem("skipqUser")||"null");
+ if(user&&user.name){
+  document.getElementById("profileIcon").textContent=user.name.charAt(0).toUpperCase();
+  document.getElementById("patientName").value=user.name;
+ }
+}catch(e){}
+
+renderDepartments();
+</script>
+</body>
+</html>
+
+

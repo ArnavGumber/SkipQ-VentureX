@@ -1,0 +1,143 @@
+<nav class="navbar">
+  <div class="logo">SKIP<span>Q</span></div>
+  <div class="nav-right">
+    <a href="./about"><i class="fa-solid fa-house"></i> Know More</a>
+    <div class="profile" id="profileIcon">P</div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">YOUR PERSONAL HEALTHCARE COMPANION</div>
+    <h1>Your health journey starts here.<br><span>Let's find your doctor!</span></h1>
+    <div class="appointment-status" id="appointmentStatusBanner" role="status" aria-live="polite" hidden>
+      <strong id="appointmentStatusTitle"></strong>
+      <span id="appointmentStatusMessage"></span>
+    </div>
+    <p>Tell us what's bothering you. SKIPQ can help you explore relevant departments and available doctors without the usual confusion.</p>
+
+    <div class="search-card">
+      <div class="search-title">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <h2>What's Buggin' You Today? 🤔</h2>
+      </div>
+      <p class="hint">Describe your symptoms in your own words. No complicated medical terms needed!</p>
+
+      <div class="search-area">
+        <textarea id="symptomInput" placeholder="Spill the symptoms! What's troubling you today? 👀"></textarea>
+        <div class="search-actions">
+          <button class="voice-btn" onclick="startVoice()" title="Voice search">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <button class="find-btn" onclick="findMyDoctor()">Find My Doctor <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <div class="examples">
+        <span>Try:</span>
+        <button class="example" onclick="setExample('I have a headache')">Headache</button>
+        <button class="example" onclick="setExample('I have joint pain')">Joint pain</button>
+        <button class="example" onclick="setExample('I have skin problems')">Skin problems</button>
+        <button class="example" onclick="setExample('I have tooth pain')">Tooth pain</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="loading" id="loading">
+    <i class="fa-solid fa-circle-notch"></i>
+    SKIPQ is finding relevant departments and doctors...
+  </section>
+
+  <section class="results" id="results">
+    <h2><i class="fa-solid fa-sparkles" style="color:#087e8b"></i> Your SKIPQ Matches</h2>
+    <p id="resultMessage"></p>
+    <div class="result-list" id="resultList"></div>
+    <div class="warning" id="resultWarning" style="display:none">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <strong>Important:</strong> This tool only suggests departments for navigation. It does not diagnose medical conditions or replace advice from a qualified healthcare professional.
+    </div>
+  </section>
+
+  <div class="section-head">
+    <div>
+      <h2>Explore Hospital Departments</h2>
+      <p>Choose a department to discover its doctors.</p>
+    </div>
+    <span class="count" id="deptCount">16 Departments</span>
+  </div>
+
+  <div class="filters">
+    <button class="filter active" data-filter="all">All Departments</button>
+    <button class="filter" data-filter="popular">Popular</button>
+    <button class="filter" data-filter="available">Doctors Available</button>
+  </div>
+
+  <div class="department-grid" id="departmentGrid"></div>
+  <div class="empty" id="emptyState">No departments found.</div>
+
+  <div class="banner">
+    <div>
+      <h3><i class="fa-solid fa-bolt"></i> Beat the Queue with SKIPQ!</h3>
+      <p>Browse registered doctors by department.<br>Find the right team for your care.</p>
+    </div>
+    <button onclick="findEarliest()">Explore Doctors <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+
+  <section class="doctors-section" id="doctorsSection">
+    <div class="section-head">
+      <div>
+        <h2 id="doctorHeading">Available Doctors</h2>
+        <p id="doctorSubheading">Choose your preferred specialist.</p>
+      </div>
+      <span class="count" id="doctorCount"></span>
+    </div>
+    <div class="doctor-grid" id="doctorGrid"></div>
+  </section>
+
+  <section class="recent">
+    <div class="section-head">
+      <div>
+        <h2>Recently Explored</h2>
+        <p>Your recently viewed departments.</p>
+      </div>
+    </div>
+    <div class="recent-list" id="recentList">
+      <span style="font-size:12px;color:#71828a">Your explored departments will appear here.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>SKIPQ</strong> — Your Health, Your Time. Skip the Wait!
+  <br><br>© 2026 SKIPQ Healthcare. Sample demonstration interface.
+</footer>
+
+<!-- BOOKING POPUP -->
+<div class="modal-bg" id="bookingModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Book Appointment</h2>
+      <button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <p id="bookingDoctor"></p>
+    <p id="patientsAhead" class="hint"></p>
+    <form id="appointmentForm">
+      <label for="patientName">Patient Name</label>
+      <input id="patientName" name="patientName" required maxlength="100" placeholder="Enter your full name">
+
+      <label for="patientAge">Age</label>
+      <input id="patientAge" name="age" type="number" min="1" max="120" required placeholder="Enter age">
+
+      <label for="patientPhone">Contact Number</label>
+      <input id="patientPhone" name="phone" type="tel" inputmode="numeric" maxlength="10" required placeholder="10-digit mobile number">
+
+      <button class="confirm" id="appointmentSubmit" type="submit">Submit Appointment Request <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>

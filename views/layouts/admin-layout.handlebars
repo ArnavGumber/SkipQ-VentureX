@@ -1,0 +1,706 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkipQ | Admin Command Centre</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --navy:#142b4a;
+  --blue:#3679e8;
+  --cyan:#32b9c9;
+  --bg:#f3f7fc;
+  --text:#253650;
+  --muted:#8492a8;
+  --green:#18a979;
+  --red:#e45c6a;
+  --orange:#ed9c45;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+}
+.sidebar{
+  width:245px;background:var(--navy);color:white;
+  min-height:100vh;padding:26px 17px;
+  position:fixed;left:0;top:0;bottom:0;
+  display:flex;flex-direction:column;z-index:5;
+}
+.brand{display:flex;align-items:center;gap:12px;margin:4px 8px 38px}
+.brand-icon{
+  width:43px;height:43px;border-radius:14px;
+  background:linear-gradient(135deg,#3e9ef5,#36c9c5);
+  display:grid;place-items:center;font-size:22px;
+}
+.brand h2{font-size:19px;letter-spacing:-.5px}
+.brand small{color:#a9bed7;font-size:10px;display:block;margin-top:3px}
+.nav-label{font-size:10px;color:#8298b3;letter-spacing:1.5px;margin:15px 12px}
+.nav-item{
+  padding:13px 14px;border-radius:11px;margin:4px 0;
+  display:flex;align-items:center;gap:13px;
+  color:#b7c8dd;font-size:13px;cursor:pointer;transition:.2s;
+}
+.nav-item:hover,.nav-item.active{
+  background:#294568;color:white;
+}
+.nav-item.active{border-left:3px solid #4fc7d0}
+.nav-item i{width:19px;text-align:center}
+.sidebar-bottom{margin-top:auto}
+.admin-profile{
+  border-top:1px solid #38516f;padding:20px 5px 0;
+  display:flex;align-items:center;gap:11px;
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:#d9edff;color:#2464ad;
+  display:grid;place-items:center;font-weight:800;
+}
+.admin-profile small{color:#a9bed7;font-size:10px}
+.admin-profile strong{font-size:12px;display:block;margin-bottom:4px}
+main{margin-left:245px;width:calc(100% - 245px);padding:28px 34px 50px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:28px;gap:15px;
+}
+.topbar h1{font-size:25px;letter-spacing:-1px;color:var(--navy)}
+.topbar p{font-size:12px;color:var(--muted);margin-top:7px}
+.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{
+  width:39px;height:39px;border:1px solid #e5ebf3;
+  border-radius:12px;background:white;color:var(--navy);
+  cursor:pointer;position:relative;
+}
+.dot{width:7px;height:7px;background:#ed6874;border-radius:50%;position:absolute;right:8px;top:7px}
+.date-pill{padding:11px 14px;background:white;border-radius:10px;font-size:11px;color:var(--muted)}
+.hero{
+  background:linear-gradient(110deg,#173c67,#2467a9 65%,#31aab6);
+  color:white;border-radius:19px;padding:25px 28px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:23px;overflow:hidden;position:relative;
+}
+.hero:after{
+  content:"✚";position:absolute;right:22%;top:-55px;
+  font-size:190px;color:#ffffff0b;
+}
+.hero h2{font-size:21px;margin-bottom:9px}
+.hero p{font-size:12px;color:#d3e8ff;line-height:1.7}
+.hero-badge{
+  padding:10px 14px;border-radius:10px;background:#ffffff20;
+  font-size:11px;z-index:1;white-space:nowrap;
+}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:15px;margin-bottom:23px;
+}
+.stat{
+  background:white;border-radius:15px;padding:19px;
+  border:1px solid #edf1f7;transition:.2s;
+}
+.stat:hover{transform:translateY(-3px);box-shadow:0 8px 25px #1a477010}
+.stat-head{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{
+  width:39px;height:39px;border-radius:12px;
+  display:grid;place-items:center;font-size:16px;
+}
+.stat strong{display:block;font-size:26px;margin:15px 0 5px;color:var(--navy)}
+.stat span{font-size:11px;color:var(--muted)}
+.stat small{font-size:10px;color:var(--green)}
+.content-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:18px;margin-bottom:19px}
+.panel{
+  background:white;border-radius:16px;padding:21px;
+  border:1px solid #edf1f7;min-width:0;
+}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:19px;gap:10px}
+.panel-head h3{font-size:14px;color:var(--navy)}
+.panel-head small{font-size:10px;color:var(--muted)}
+.btn{
+  border:0;border-radius:9px;padding:10px 13px;
+  font-size:11px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.btn-blue{background:var(--blue);color:white}
+.btn-blue:hover{background:#245fc0}
+.btn-green{background:#e5f7ef;color:#13895e}
+.btn-red{background:#fff0f1;color:#d44d5a}
+.btn-light{background:#edf3fc;color:#376cae}
+.btn-orange{background:#fff4e6;color:#bd7624}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.search{
+  border:1px solid #e6ebf3;border-radius:9px;padding:10px 12px;
+  font-size:11px;outline:none;width:100%;font-family:inherit;
+}
+.search:focus{border-color:var(--blue)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{
+  color:#92a0b3;text-align:left;font-size:10px;
+  font-weight:600;padding:12px 10px;border-bottom:1px solid #edf1f6;
+}
+td{padding:13px 10px;font-size:11px;border-bottom:1px solid #f0f3f8}
+td strong{color:var(--navy)}
+.status{
+  padding:6px 9px;border-radius:20px;font-size:9px;font-weight:700;
+  display:inline-block;
+}
+.available{background:#e6f8f0;color:#15966a}
+.pending{background:#fff4e3;color:#bc812c}
+.rejected{background:#ffebed;color:#d24d5c}
+.booked{background:#eaf0ff;color:#456fc2}
+.completed{background:#eaf5f5;color:#328a8c}
+.mini-btn{padding:7px 9px;font-size:10px}
+.doctor-list{display:flex;flex-direction:column;gap:17px}
+.doctor{
+  display:flex;align-items:center;gap:12px;
+}
+.doctor-avatar{
+  width:40px;height:40px;border-radius:12px;
+  background:#e9f2ff;color:#3575c4;display:grid;place-items:center;
+}
+.doctor-info{flex:1}
+.doctor-info strong{font-size:11px;display:block;margin-bottom:5px}
+.doctor-info small{font-size:9px;color:var(--muted)}
+.progress{height:6px;background:#edf1f6;border-radius:10px;margin-top:8px;overflow:hidden}
+.progress span{display:block;height:100%;border-radius:10px;background:var(--cyan)}
+.doctor-count{font-size:10px;color:var(--muted)}
+.queue-list{display:flex;flex-direction:column;gap:13px}
+.queue-item{display:flex;align-items:center;gap:12px;padding:10px;background:#f8faff;border-radius:11px}
+.token{
+  background:#e6efff;color:#326ec0;border-radius:9px;
+  padding:10px;font-weight:800;font-size:12px;
+}
+.queue-info{flex:1}
+.queue-info strong{font-size:11px;display:block}
+.queue-info small{font-size:9px;color:var(--muted)}
+.section{display:none}
+.section.active{display:block}
+.toolbar{display:flex;gap:10px;margin-bottom:17px;flex-wrap:wrap}
+.toolbar .search{flex:1;min-width:170px}
+.doctor-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.doctor-form-grid .field{margin-bottom:5px}
+select{
+  padding:10px;border:1px solid #e6ebf3;border-radius:9px;
+  background:white;font-size:11px;color:var(--text);outline:none;
+}
+.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.slot-card{padding:15px;border:1px solid #e9eff6;border-radius:12px}
+.slot-card h4{font-size:12px;margin-bottom:7px}
+.slot-card p{font-size:10px;color:var(--muted);margin-bottom:12px}
+.slot-card .slot-time{display:flex;justify-content:space-between;font-size:10px;margin:7px 0}
+.alert{
+  background:#fff8eb;border:1px solid #f8e5c4;
+  color:#966522;padding:13px;border-radius:11px;
+  font-size:11px;line-height:1.6;margin-bottom:15px;
+}
+.notification{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 4px;border-bottom:1px solid #edf1f6;
+}
+.notification i{width:36px;height:36px;border-radius:11px;background:#eaf2ff;color:#4278c6;display:grid;place-items:center}
+.notification div{flex:1}
+.notification strong{font-size:11px;display:block;margin-bottom:5px}
+.notification small{font-size:10px;color:var(--muted)}
+.modal-bg{
+  display:none;position:fixed;inset:0;background:#10233a88;
+  z-index:20;align-items:center;justify-content:center;padding:15px;
+}
+.modal-bg.show{display:flex}
+.modal{
+  width:430px;max-width:100%;background:white;border-radius:17px;
+  padding:24px;max-height:90vh;overflow:auto;
+}
+.modal h3{font-size:17px;margin-bottom:18px;color:var(--navy)}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:10px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px;border:1px solid #e5ebf2;
+  border-radius:9px;font:11px Inter;outline:none;
+}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.toast{
+  position:fixed;bottom:25px;right:25px;background:#183c5e;
+  color:white;padding:14px 19px;border-radius:12px;
+  font-size:12px;z-index:50;display:none;
+  box-shadow:0 8px 25px #0002;
+}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:12px}
+.mobile-menu{display:none}
+@media(max-width:1050px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .content-grid{grid-template-columns:1fr}
+ .slot-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+ .sidebar{width:65px;padding:20px 8px}
+ .brand{margin:0 0 35px;justify-content:center}
+ .brand h2,.nav-item span,.nav-label,.admin-profile div{display:none}
+ .nav-item{justify-content:center;padding:14px 5px}
+ .admin-profile{justify-content:center}
+ main{margin-left:65px;width:calc(100% - 65px);padding:20px 13px}
+ .topbar h1{font-size:19px}
+ .date-pill{display:none}
+ .hero{padding:20px}
+ .hero h2{font-size:17px}
+ .hero-badge{font-size:9px}
+ .stats{gap:9px}
+ .stat{padding:13px}
+ .stat strong{font-size:22px}
+ .slot-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+{{{body}}}
+
+<script>
+const today = new Date().toISOString().slice(0,10);
+document.getElementById("todayDate").textContent =
+  new Date().toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+document.getElementById("dateText").textContent =
+  new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+const defaultDoctors=[
+ {id:1,name:"Dr. Aditi Sharma",specialty:"Cardiologist",hours:"09:00 - 13:00",slots:["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30"],off:false},
+ {id:2,name:"Dr. Rahul Mehta",specialty:"Dermatologist",hours:"10:00 - 14:00",slots:["10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30"],off:false},
+ {id:3,name:"Dr. Neha Kapoor",specialty:"Neurologist",hours:"09:00 - 13:00",slots:["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30"],off:false},
+ {id:4,name:"Dr. Arjun Singh",specialty:"Orthopedic",hours:"11:00 - 15:00",slots:["11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30"],off:false}
+];
+
+function load(key, fallback){
+ try {const v=localStorage.getItem("medipulse_"+key);return v?JSON.parse(v):fallback}
+ catch(e){return fallback}
+}
+let doctors=load("doctors",defaultDoctors);
+let managedDoctors=[];
+let firestoreAppointmentRequests=[];
+let patients=load("patients",[
+ {id:"P101",name:"Aarav Malhotra",phone:"9876543210",email:"aarav@example.com"},
+ {id:"P102",name:"Priya Verma",phone:"9876501234",email:"priya@example.com"},
+ {id:"P103",name:"Rohan Gupta",phone:"9812345678",email:"rohan@example.com"},
+ {id:"P104",name:"Ananya Singh",phone:"9123456780",email:"ananya@example.com"}
+]);
+let appointments=load("appointments",[
+ {id:1,pid:"P101",name:"Aarav Malhotra",phone:"9876543210",doctor:1,date:today,time:"09:00",reason:"Regular checkup",status:"Accepted",token:"T001",queue:"Waiting"},
+ {id:2,pid:"P102",name:"Priya Verma",phone:"9876501234",doctor:2,date:today,time:"10:00",reason:"Skin consultation",status:"Accepted",token:"T002",queue:"Waiting"},
+ {id:3,pid:"P103",name:"Rohan Gupta",phone:"9812345678",doctor:1,date:today,time:"10:30",reason:"Heart consultation",status:"Pending",token:"",queue:""},
+ {id:4,pid:"P104",name:"Ananya Singh",phone:"9123456780",doctor:3,date:today,time:"11:00",reason:"Headache consultation",status:"Pending",token:"",queue:""}
+]);
+let notifications=load("notifications",[]);
+let nextToken=load("nextToken",3);
+
+function save(){
+ localStorage.setItem("medipulse_doctors",JSON.stringify(doctors));
+ localStorage.setItem("medipulse_patients",JSON.stringify(patients));
+ localStorage.setItem("medipulse_appointments",JSON.stringify(appointments));
+ localStorage.setItem("medipulse_notifications",JSON.stringify(notifications));
+ localStorage.setItem("medipulse_nextToken",JSON.stringify(nextToken));
+}
+function toast(msg){
+ const t=document.getElementById("toast");
+ t.textContent=msg;t.style.display="block";
+ setTimeout(()=>t.style.display="none",2800);
+}
+function docName(id){return doctors.find(d=>d.id==id)?.name||"Unknown doctor"}
+function escapeHTML(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function badge(status){
+ const c={Pending:"pending",Accepted:"available",Verified:"available",Rejected:"rejected",Completed:"completed",Waiting:"pending","Now Serving":"booked",Skipped:"rejected"}[status]||"booked";
+ return `<span class="status ${c}">${escapeHTML(status)}</span>`;
+}
+function renderManagedDoctors(){
+ const table=document.getElementById("managedDoctorTable");
+ table.innerHTML=managedDoctors.map(doctor=>`
+ <tr><td><strong>${escapeHTML(doctor.name)}</strong></td>
+ <td>${escapeHTML(doctor.specialty)}</td><td>${escapeHTML(doctor.phone)}</td>
+ <td>${escapeHTML(doctor.email||"—")}</td><td>${escapeHTML(doctor.hours)}</td></tr>
+ `).join("")||'<tr><td colspan="5" class="empty">No doctors registered yet</td></tr>';
+ renderFirestoreDoctorCards();
+ renderDoctorOverview();
+}
+function renderFirestoreDoctorCards(){
+ const cards=document.getElementById("firestoreDoctorCards");
+ cards.innerHTML=managedDoctors.map(doctor=>`
+ <div class="slot-card">
+  <h4>${escapeHTML(doctor.name)}</h4>
+  <p>${escapeHTML(doctor.specialty)}</p>
+  <div class="slot-time"><span>Working hours</span><b>${escapeHTML(doctor.hours)}</b></div>
+  <div class="slot-time"><span>Contact</span><b>${escapeHTML(doctor.phone)}</b></div>
+  ${doctor.email?`<div class="slot-time"><span>Email</span><b>${escapeHTML(doctor.email)}</b></div>`:""}
+ </div>
+ `).join("")||'<div class="empty">No doctors are registered in the database yet.</div>';
+}
+async function loadManagedDoctors(){
+ const table=document.getElementById("managedDoctorTable");
+ try{
+  const response=await fetch("/api/doctors");
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Unable to retrieve doctors.");
+  managedDoctors=result;
+  renderManagedDoctors();
+ }catch(error){
+  table.innerHTML='<tr><td colspan="5" class="empty">Unable to load doctors. Please try again.</td></tr>';
+  document.getElementById("firestoreDoctorCards").innerHTML='<div class="empty">Unable to load doctor availability from the database.</div>';
+  renderDoctorOverview();
+  toast(error.message||"Unable to retrieve doctors.");
+ }
+}
+function showPage(page){
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".nav-item[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ const titles={dashboard:"Dashboard Overview",appointments:"Appointment Management",patients:"Patient Records",doctors:"Doctor Availability","manage-doctors":"Doctor Management",tokens:"Live Token Tracking",notifications:"Notification Centre"};
+ document.getElementById("pageTitle").textContent=titles[page];
+ renderAll();
+ if(page==="doctors"||page==="manage-doctors")loadManagedDoctors();
+ if(page==="appointments"||page==="tokens")loadAppointmentRequests();
+}
+document.querySelectorAll(".nav-item[data-page]").forEach(n=>n.addEventListener("click",()=>showPage(n.dataset.page)));
+
+function doctorBookings(id,date=today){
+ return appointments.filter(a=>a.doctor==id&&a.date===date&&a.status==="Accepted");
+}
+function isSlotAvailable(id,date,time,excludeId=null){
+ const d=doctors.find(x=>x.id==id);
+ return d&&!d.off&&d.slots.includes(time)&&!appointments.some(a=>
+ a.doctor==id&&a.date===date&&a.time===time&&a.status==="Accepted"&&a.id!==excludeId);
+}
+function notify(a,message,type){
+ notifications.unshift({id:Date.now()+Math.random(),pid:a.pid,name:a.name,phone:a.phone,message,type,status:"Sent",time:new Date().toLocaleString("en-IN")});
+}
+function updateDashboard(){
+ document.getElementById("totalPatients").textContent=
+  new Set(firestoreAppointmentRequests.map(request=>request.phone)).size;
+ document.getElementById("totalAppointments").textContent=firestoreAppointmentRequests.length;
+ document.getElementById("pendingRequests").textContent=
+  firestoreAppointmentRequests.filter(request=>request.status==="Pending").length;
+ document.getElementById("waitingPatients").textContent="—";
+ document.getElementById("requestCount").textContent=
+  firestoreAppointmentRequests.filter(request=>request.status==="Pending").length+" Pending";
+}
+function renderRecent(){
+ document.getElementById("recentAppointments").innerHTML=firestoreAppointmentRequests.slice(0,5).map(request=>`
+ <tr><td><strong>${escapeHTML(request.patientName)}</strong></td><td>${escapeHTML(request.doctorName)}</td>
+ <td>${request.createdAt?escapeHTML(new Date(request.createdAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})):"—"}</td>
+ <td>${badge(request.status)}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">No appointment requests yet</td></tr>`;
+}
+function renderDoctorOverview(){
+ document.getElementById("doctorOverview").innerHTML=managedDoctors.map(doctor=>`
+ <div class="doctor">
+ <div class="doctor-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+ <div class="doctor-info"><strong>${escapeHTML(doctor.name)}</strong>
+ <small>${escapeHTML(doctor.specialty)} · ${escapeHTML(doctor.hours)}</small></div></div>
+ `).join("")||'<div class="empty">No doctors registered</div>';
+}
+function renderDashboardQueue(){
+ document.getElementById("dashboardQueue").innerHTML=
+  '<div class="empty">Live queue data is not available in the database.</div>';
+}
+function renderAppointments(){
+ const q=document.getElementById("appointmentSearch").value.toLowerCase();
+ const f=document.getElementById("appointmentFilter").value;
+ const requests=firestoreAppointmentRequests
+  .filter(a=>(f==="All"||a.status===f)&&[a.patientName,a.phone,a.doctorName,a.department].join(" ").toLowerCase().includes(q))
+  .map(a=>{
+   const requested=a.createdAt?new Date(a.createdAt).toLocaleString("en-IN"):"—";
+   return `<tr><td><strong>${escapeHTML(a.patientName)}</strong></td><td>${escapeHTML(a.age)}</td>
+   <td>${escapeHTML(a.phone)}</td><td>${escapeHTML(a.doctorName)}<br>${escapeHTML(a.department)}</td>
+   <td>${escapeHTML(requested)}</td><td>${a.status==="Verified"?escapeHTML(a.patientsAhead):"—"}</td>
+   <td>${a.token?escapeHTML(a.token):"—"}</td><td>${badge(a.status)}</td><td>
+   ${a.status==="Pending"?`<button class="btn btn-green mini-btn" onclick="verifyAppointmentRequest('${escapeHTML(a.id)}')" ${a.verifying?"disabled":""}>${a.verifying?"Verifying...":"Verify"}</button>`:"—"}
+   </td></tr>`;
+  });
+ document.getElementById("appointmentTable").innerHTML=requests.join("")||
+  '<tr><td colspan="9" class="empty">No matching appointments</td></tr>';
+ document.getElementById("requestCount").textContent=
+  firestoreAppointmentRequests.filter(a=>a.status==="Pending").length+" Pending";
+}
+async function loadAppointmentRequests(){
+ try{
+  const response=await fetch("/api/appointment-requests");
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Unable to retrieve appointment requests.");
+  if(!Array.isArray(result))throw new Error("The appointment request list is invalid.");
+  firestoreAppointmentRequests=result;
+  renderAppointments();
+  renderTokens();
+  renderPatients();
+  updateDashboard();
+ }catch(error){
+  toast(error.message||"Unable to retrieve appointment requests.");
+ }
+}
+async function verifyAppointmentRequest(id){
+ const appointment=firestoreAppointmentRequests.find(a=>a.id===id);
+ if(!appointment||appointment.status!=="Pending"||appointment.verifying)return;
+ appointment.verifying=true;
+ renderAppointments();
+ try{
+  const response=await fetch(`/api/appointment-requests/${encodeURIComponent(id)}/verify`,{method:"POST"});
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Unable to verify appointment request.");
+  appointment.status=result.status;
+  appointment.verifiedAt=result.verifiedAt;
+  appointment.token=result.token;
+  appointment.tokenNumber=result.tokenNumber;
+  appointment.patientsAhead=result.patientsAhead;
+  const people= result.patientsAhead===1?"person":"people";
+  const verificationMessage=`Appointment verified. Token ${result.token} generated; ${result.patientsAhead} ${people} ahead.`;
+  toast(result.smsSent?`${verificationMessage} SMS sent.`:`${verificationMessage} SMS failed to send.`);
+ }catch(error){
+  toast(error.message||"Unable to verify appointment request.");
+ }finally{
+  appointment.verifying=false;
+  renderAppointments();
+  renderTokens();
+  updateDashboard();
+ }
+}
+function acceptAppointment(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.status!=="Pending")return;
+ if(!isSlotAvailable(a.doctor,a.date,a.time)){
+ toast("This doctor's slot is unavailable!");
+ return;
+ }
+ a.status="Accepted";
+ a.token="T"+String(nextToken++).padStart(3,"0");
+ a.queue="Waiting";
+ notify(a,`Appointment accepted. Your token number is ${a.token}. Please arrive before ${a.time}.`,"Appointment confirmation");
+ notify(a,`Your token ${a.token} has been generated.`,"Token generation");
+ save();renderAll();toast("Appointment accepted and token generated!");
+}
+function rejectAppointment(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.status!=="Pending")return;
+ if(!confirm("Are you sure you want to reject this appointment?"))return;
+ a.status="Rejected";notify(a,"Your appointment request has been rejected. Please contact the hospital for assistance.","Appointment rejection");
+ save();renderAll();toast("Appointment rejected.");
+}
+function renderPatients(){
+ const q=document.getElementById("patientSearch").value.toLowerCase();
+ const patientsByPhone=new Map();
+ firestoreAppointmentRequests.forEach(request=>{
+  if(!patientsByPhone.has(request.phone))patientsByPhone.set(request.phone,[]);
+  patientsByPhone.get(request.phone).push(request);
+ });
+ const list=[...patientsByPhone.entries()].map(([phone,requests])=>({phone,requests,latest:requests[0]}))
+  .filter(patient=>[patient.phone,patient.latest.patientName].join(" ").toLowerCase().includes(q));
+ document.getElementById("patientTable").innerHTML=list.map(patient=>`
+ <tr><td><strong>${escapeHTML(patient.latest.patientName)}</strong></td>
+ <td>${escapeHTML(patient.latest.age)}</td><td>${escapeHTML(patient.phone)}</td>
+ <td>${patient.requests.length}</td>
+ <td><button class="btn btn-light mini-btn" onclick="patientDetails('${escapeHTML(patient.phone)}')">View requests</button></td></tr>
+ `).join("")||'<tr><td colspan="5" class="empty">No patients with appointment requests</td></tr>';
+}
+function patientDetails(phone){
+ const records=firestoreAppointmentRequests.filter(request=>request.phone===phone);
+ if(!records.length)return;
+ const patient=records[0];
+ openModal("Patient Details",`
+ <p><b>Name:</b> ${escapeHTML(patient.patientName)}</p><br>
+ <p><b>Age:</b> ${escapeHTML(patient.age)}</p><br>
+ <p><b>Contact:</b> ${escapeHTML(phone)}</p><br>
+ <b>Appointment Requests</b><br><br>
+ ${records.map(request=>`${escapeHTML(new Date(request.createdAt).toLocaleString("en-IN"))} · ${escapeHTML(request.doctorName)} · ${badge(request.status)}`).join("<br><br>")}
+ `,()=>closeModal());
+}
+function addPatient(){
+ openModal("Register Patient",`
+ <div class="field"><label>Full name</label><input id="newName" required></div>
+ <div class="field"><label>Contact number</label><input id="newPhone" required></div>
+ <div class="field"><label>Email address</label><input id="newEmail" type="email"></div>
+ `,()=>{
+ const name=document.getElementById("newName").value.trim();
+ const phone=document.getElementById("newPhone").value.trim();
+ const email=document.getElementById("newEmail").value.trim();
+ if(!name||!phone){toast("Enter patient name and contact number.");return;}
+ patients.push({id:"P"+Date.now().toString().slice(-6),name,phone,email});
+ save();closeModal();renderAll();toast("Patient registered successfully!");
+ });
+}
+function renderDoctors(){
+ const date=document.getElementById("slotDate").value||today;
+ const filter=document.getElementById("doctorFilter").value;
+ const list=doctors.filter(d=>{
+ const booked=doctorBookings(d.id,date).length;
+ const status=d.off?"Unavailable":booked===d.slots.length?"Fully Booked":"Available";
+ return filter==="All"||filter===status;
+ });
+ document.getElementById("doctorCards").innerHTML=list.map(d=>{
+ const booked=doctorBookings(d.id,date).length;
+ const free=d.off?0:d.slots.filter(t=>isSlotAvailable(d.id,date,t)).length;
+ const status=d.off?"Unavailable":free===0?"Fully Booked":"Available";
+ return `<div class="slot-card">
+ <div style="display:flex;justify-content:space-between;gap:6px">
+ <h4>${escapeHTML(d.name)}</h4>${badge(status)}</div>
+ <p>${escapeHTML(d.specialty)} · ${escapeHTML(d.hours)}</p>
+ <div class="slot-time"><span>Total slots</span><b>${d.slots.length}</b></div>
+ <div class="slot-time"><span>Booked</span><b>${booked}</b></div>
+ <div class="slot-time"><span>Remaining</span><b style="color:var(--green)">${free}</b></div>
+ <div class="progress"><span style="width:${booked/d.slots.length*100}%"></span></div>
+ <p style="margin-top:12px;font-weight:700;color:var(--text)">Daily time slots</p>
+ <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0">
+ ${d.slots.map(t=>`<span class="status ${!isSlotAvailable(d.id,date,t)?"rejected":"available"}">${t}</span>`).join("")}
+ </div>
+ <button class="btn ${d.off?"btn-green":"btn-orange"}" style="width:100%" onclick="toggleDoctor(${d.id})">${d.off?"Mark Available":"Mark Unavailable"}</button>
+ </div>`;
+ }).join("")||'<div class="empty">No doctors match this filter</div>';
+}
+function toggleDoctor(id){
+ const d=doctors.find(x=>x.id===id);
+ if(!d)return;
+ if(!d.off&&appointments.some(a=>a.doctor==id&&a.date===(document.getElementById("slotDate").value||today)&&a.status==="Accepted")){
+ toast("This doctor has accepted appointments. Manage them before marking unavailable.");
+ return;
+ }
+ d.off=!d.off;save();renderAll();toast(d.name+(d.off?" marked unavailable":" marked available"));
+}
+function renderTokens(){
+ const doctorFilter=document.getElementById("tokenDoctorFilter");
+ const selectedDoctorId=doctorFilter.value;
+ const queueRequests=firestoreAppointmentRequests.filter(request=>
+  ["Verified","Completed"].includes(request.status)&&request.token
+ );
+ const doctorsById=new Map();
+ queueRequests.forEach(request=>{
+  if(request.doctorId)doctorsById.set(request.doctorId,request.doctorName);
+ });
+ const doctorOptions=[...doctorsById.entries()].sort((a,b)=>
+  String(a[1]||"").localeCompare(String(b[1]||""))
+ );
+ doctorFilter.innerHTML='<option value="">All doctors</option>'+doctorOptions.map(([id,name])=>
+  `<option value="${escapeHTML(id)}">${escapeHTML(name)}</option>`
+ ).join("");
+ doctorFilter.value=doctorsById.has(selectedDoctorId)?selectedDoctorId:"";
+
+ const requests=queueRequests
+  .filter(request=>!doctorFilter.value||request.doctorId===doctorFilter.value)
+  .sort((a,b)=>String(a.doctorName||"").localeCompare(String(b.doctorName||""))||
+   (a.tokenNumber||Number.MAX_SAFE_INTEGER)-(b.tokenNumber||Number.MAX_SAFE_INTEGER));
+ document.getElementById("tokenTable").innerHTML=requests.map(request=>{
+  const queueStatus=request.queueStatus||(request.status==="Completed"?"Completed":"Waiting");
+  const busy=request.queueUpdating?"disabled":"";
+  let actions="—";
+  if(queueStatus==="Waiting"){
+   actions=`<button class="btn btn-blue mini-btn" onclick="updateAppointmentQueueStatus('${escapeHTML(request.id)}','Now Serving')" ${busy}>Now Serving</button>`;
+  }else if(queueStatus==="Now Serving"){
+   actions=`<button class="btn btn-light mini-btn" onclick="updateAppointmentQueueStatus('${escapeHTML(request.id)}','Waiting')" ${busy}>Return to Queue</button>
+   <button class="btn btn-green mini-btn" onclick="updateAppointmentQueueStatus('${escapeHTML(request.id)}','Completed')" ${busy}>Complete</button>`;
+  }else if(queueStatus==="Completed"){
+   actions='<span class="status completed">Completed</span>';
+  }
+  const requested=request.createdAt?new Date(request.createdAt).toLocaleString("en-IN"):"—";
+  return `<tr><td><strong>${escapeHTML(request.token)}</strong></td>
+  <td>${escapeHTML(request.patientName)}</td><td>${escapeHTML(request.doctorName)}</td>
+  <td>${escapeHTML(requested)}</td><td>${badge(queueStatus)}</td><td>${actions}</td></tr>`;
+ }).join("")||'<tr><td colspan="6" class="empty">No verified appointments in this queue.</td></tr>';
+}
+async function updateAppointmentQueueStatus(id,queueStatus){
+ const appointment=firestoreAppointmentRequests.find(request=>request.id===id);
+ if(!appointment||appointment.queueUpdating)return;
+ appointment.queueUpdating=true;
+ renderTokens();
+ try{
+  const response=await fetch(`/api/appointment-requests/${encodeURIComponent(id)}/queue-status`,{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({queueStatus})
+  });
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Unable to update the appointment queue.");
+  appointment.status=result.status;
+  appointment.queueStatus=result.queueStatus;
+  appointment.queueUpdatedAt=result.queueUpdatedAt;
+  const messages={
+   "Now Serving":"Patient moved to Now Serving.",
+   Waiting:"Patient returned to the waiting queue.",
+   Completed:"Appointment marked completed."
+  };
+  toast(messages[result.queueStatus]||"Appointment queue updated.");
+ }catch(error){
+  toast(error.message||"Unable to update the appointment queue.");
+ }finally{
+  appointment.queueUpdating=false;
+  renderTokens();
+  renderAppointments();
+  updateDashboard();
+ }
+}
+function renderNotifications(){
+ const q=document.getElementById("notificationSearch").value.toLowerCase();
+ const f=document.getElementById("notificationFilter").value;
+ const list=notifications.filter(n=>(f==="All"||n.status===f)&&[n.name,n.phone,n.message,n.type].join(" ").toLowerCase().includes(q));
+ document.getElementById("notificationList").innerHTML=list.map(n=>`
+ <div class="notification">
+ <i class="fa-solid fa-message"></i>
+ <div><strong>${escapeHTML(n.type)} · ${escapeHTML(n.name)}</strong>
+ <small>${escapeHTML(n.message)}<br>${escapeHTML(n.time)} · ${escapeHTML(n.phone)}</small></div>
+ ${badge(n.status)}
+ <button class="btn btn-light mini-btn" onclick="resend(${n.id})">Resend</button>
+ </div>`).join("")||'<div class="empty">No notifications found</div>';
+}
+function resend(id){
+ const n=notifications.find(x=>x.id===id);
+ if(!n)return;
+ n.status="Sent";n.time=new Date().toLocaleString("en-IN");
+ save();renderNotifications();toast("Demo notification marked as sent.");
+}
+function queueAlert(){
+ toast("Queue data is not available in the database yet.");
+}
+function openModal(title,body,action){
+ document.getElementById("modalTitle").textContent=title;
+ document.getElementById("modalBody").innerHTML=body;
+ document.getElementById("modalSave").onclick=action;
+ document.getElementById("modalBg").classList.add("show");
+}
+function closeModal(){document.getElementById("modalBg").classList.remove("show")}
+function logout(){
+ if(confirm("Log out of MediPulse Admin?"))toast("Demo logout. Connect your authentication system for secure logout.");
+}
+function renderAll(){
+ updateDashboard();renderRecent();renderDoctorOverview();
+ renderDashboardQueue();renderAppointments();renderPatients();
+ renderTokens();renderNotifications();
+}
+document.getElementById("doctorForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+ const form=event.currentTarget;
+ const submitButton=document.getElementById("doctorSubmit");
+ submitButton.disabled=true;
+ try{
+  const values=Object.fromEntries(new FormData(form).entries());
+  const response=await fetch("/api/doctors",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify(values)
+  });
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Unable to save doctor.");
+  managedDoctors.unshift(result);
+  renderManagedDoctors();
+  form.reset();
+  toast("Doctor added successfully.");
+ }catch(error){
+  toast(error.message||"Unable to save doctor.");
+ }finally{
+  submitButton.disabled=false;
+ }
+});
+save();
+renderAll();
+loadManagedDoctors();
+loadAppointmentRequests();
+</script>
+</body>
+</html>
